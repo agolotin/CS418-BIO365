@@ -83,6 +83,7 @@ def printOutput(contig_output):
         total_length += len(contig)
         if len(contig) > largest_size:
             largest_size = len(contig)
+
         print ">Contig" + str(total) + "_length" + str(len(contig))
         print contig
         total += 1
