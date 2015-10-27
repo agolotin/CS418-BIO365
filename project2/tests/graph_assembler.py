@@ -96,9 +96,9 @@ if __name__ == "__main__":
     try:
         with open(sys.argv[1]) as fd:
             sequences = filter(lambda a : a[0] != '>', [seq.strip() for seq in fd])
-            k = int(sys.argv[2])
-            errors = True if sys.argv[3][0].lower() == 'e' else False
-            percentline = float(sys.argv[4]) if len(sys.argv) > 4 else 0.1
+        k = int(sys.argv[2])
+        errors = True if sys.argv[3][0].lower() == 'e' else False
+        percentline = float(sys.argv[4]) if len(sys.argv) > 4 else 0.1
     except:
         print "USAGE: python graph_assembler.py <input_file_path> <kmer_size> <errors : noerrors> optional:<percentline>"
         sys.exit()
