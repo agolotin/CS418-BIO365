@@ -22,9 +22,7 @@ def checkForErrors(kmers, errors, percentline):
     if errors:
         # we are going to ignore 1% of all least occuring kmers
         amount_to_ignore = int(round(len(kmers) * percentline))
-        print len(kmers)
         kmers = sorted(kmers.items(), key=operator.itemgetter(1))[amount_to_ignore + 1:]
-        print len(kmers)
         kmer_list = list(zip(*kmers)[0])
     else:
         kmer_list = list(kmers.keys())
@@ -72,16 +70,16 @@ def getContigs(node_first, node_second, balanced):
 #==========================================================
 
 def printOutput(contig_output):
-    total = 1
+    total = 0
     total_length = 0
     largest_size = -1
     for contig in contig_output:
+        total += 1
         total_length += len(contig)
         if len(contig) > largest_size:
             largest_size = len(contig)
         print ">Contig" + str(total) + "_length" + str(len(contig))
         print contig
-        total += 1
     print
     print "Average contig size: " + str(float(total_length) / float(total))
     print "Number of contigs returned: " + str(total)
@@ -89,13 +87,14 @@ def printOutput(contig_output):
 
 
 if __name__ == "__main__":
+    sys.setrecursionlimit(1000000)
     #load the parameters
     try:
         with open(sys.argv[1]) as fd:
             sequences = filter(lambda a : a[0] != '>', [seq.strip() for seq in fd])
             k = int(sys.argv[2])
             errors = True if sys.argv[3][0].lower() == 'e' else False
-            percentline = sys.argv[4] if len(sys.argv) > 4 else 0.05
+            percentline = float(sys.argv[4]) if len(sys.argv) > 4 else 0.05
     except:
         print "USAGE: python graph_assembler.py <input_file_path> <kmer_size> <errors : noerrors> optional:<percentline>"
         sys.exit()
