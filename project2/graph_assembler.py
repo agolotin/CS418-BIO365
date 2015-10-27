@@ -17,7 +17,7 @@ def buildKmers(sequences, k):
 def checkForErrors(kmers, errors, percentline):
     ''' If there are errors in reads the function will get rid of 
         least occuring kmers based on the number of
-		a single kmer occuring '''
+    	how many times the most frequenct kmer occurs '''
     kmer_list = list()
 
     if errors:
@@ -74,17 +74,17 @@ def getContigs(node_first, node_second, balanced):
 #==========================================================
 
 def printOutput(contig_output):
-    total = 1
+    total = 0
     total_length = 0
     largest_size = -1
     for contig in contig_output:
+        total += 1
         total_length += len(contig)
         if len(contig) > largest_size:
             largest_size = len(contig)
 
         print ">Contig" + str(total) + "_length" + str(len(contig))
         print contig
-        total += 1
     print
     print "Average contig size: " + str(float(total_length) / float(total))
     print "Number of contigs returned: " + str(total)
@@ -98,7 +98,7 @@ if __name__ == "__main__":
             sequences = filter(lambda a : a[0] != '>', [seq.strip() for seq in fd])
             k = int(sys.argv[2])
             errors = True if sys.argv[3][0].lower() == 'e' else False
-            percentline = float(sys.argv[4]) if len(sys.argv) > 4 else 0.01
+            percentline = float(sys.argv[4]) if len(sys.argv) > 4 else 0.1
     except:
         print "USAGE: python graph_assembler.py <input_file_path> <kmer_size> <errors : noerrors> optional:<percentline>"
         sys.exit()
