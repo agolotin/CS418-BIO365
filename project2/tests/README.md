@@ -1,1 +1,1 @@
-graph_assembler.py is the working version of the DeBrujin Graph Assembler implemented as the main part of Project 2
+The working version of the program resides in graph_assembler.py. Outputs/ directory contains the outputs from running run_assembler.py

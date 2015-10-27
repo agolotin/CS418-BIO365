@@ -17,7 +17,7 @@ def buildKmers(sequences, k):
 def checkForErrors(kmers, errors, percentline):
     ''' If there are errors in reads the function will get rid of 
         least occuring kmers based on the number of
-		a single kmer occuring '''
+    	how many times the most frequent kmer occurs '''
     kmer_list = list()
 
     if errors:
