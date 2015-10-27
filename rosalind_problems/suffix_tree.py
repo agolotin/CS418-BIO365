@@ -167,7 +167,7 @@ class SuffixTree:
     def edge_string( self, node ):
         start = self.nodes[ node ].get_start()
         end = min( self.pos + 1, self.nodes[ node ].get_end() )
-        return text[ start : end ]
+        return self.text[ start : end ]
 
     def print_tree(self ):
         self.print_edges( self.root )
