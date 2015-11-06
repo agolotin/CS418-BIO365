@@ -1,11 +1,21 @@
 #! /usr/bin/env python
-
-from suffix_tree import SuffixTree
-from collections import defaultdict
+from suffix_tree import SuffixTree from collections import defaultdict
 from datetime import datetime
 import itertools
 import operator
 import sys
+
+''' Get current date and time for the logger '''
+def getTime():
+    current_time = datetime.now()
+
+    year = current_time.year
+    month = current_time.month
+    hour = current_time.hour
+    minute = current_time.minute
+    second = current_time.second
+
+    return "{0}/{1} {2}:{3}:{4}".format(year, month, hour, minute, second)
 
 class overlapFinder(object):
 
@@ -36,7 +46,7 @@ class overlapFinder(object):
 
             lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
 
-        print "[Logging " + getTime() + "] Read '" + read[0] + "' has been mapped"
+        print "[Logging " + getTime() + "] " + read[0] + " has been mapped"
         return list(set([self.suffix_array[i] for i in lft_indicies]))
 
 '''
@@ -61,7 +71,8 @@ reads = ["ATCG", "GGGT"]
 '''
 
 
-
+''' Function constructs a suffix array from 
+    first constructing a suffix tree '''
 def constructSuffixArray(main_sequence):
 
     tree = SuffixTree(len(main_sequence))
@@ -72,6 +83,9 @@ def constructSuffixArray(main_sequence):
 
     return tree.depthFirstSearch()
 
+''' Enumerates characters in a sequence
+    If input is "AGCTA" the output will be 
+    ['A1', 'G1', 'C1', 'T1' 'A2'] '''
 def _enumerate(sequence):
     enumerated = list()
     char_count = defaultdict(int)
@@ -82,6 +96,9 @@ def _enumerate(sequence):
 
     return enumerated
 
+''' Constructs Burrows-Wheeler Transform as well as the
+    first lexicographic rotation of a given string from
+    suffix array '''
 def BurrowsWheelerTransform(seq, suffix_array):
     first_rotation = list()
     bw_transform = list()
@@ -93,12 +110,15 @@ def BurrowsWheelerTransform(seq, suffix_array):
 
     return _enumerate(first_rotation), _enumerate(bw_transform)
 
+''' Constructs last to first array by searching for the 
+    index of a string from Burrows-Wheeler Transform in
+    the first lexicographic rotation '''
 def constructLTF(first_rotation, bw_transform):
     last_to_first = [first_rotation.index(key) for key in bw_transform]
 
     return last_to_first
 
-
+''' Creates a .sam file to be outputted '''
 def createSam(reference, read_overlaps):
     output = ""
 
@@ -112,16 +132,6 @@ def createSam(reference, read_overlaps):
 
     return output
 
-def getTime():
-    current_time = datetime.now()
-
-    year = current_time.year
-    month = current_time.month
-    hour = current_time.hour
-    minute = current_time.minute
-    second = current_time.second
-
-    return "{0}/{1} {2}:{3}:{4}".format(year, month, hour, minute, second)
 
 if __name__ == "__main__":
 
@@ -154,7 +164,7 @@ if __name__ == "__main__":
         # Should be written to a file later
         finder = overlapFinder(suffix_array, first_rotation, bw_transform, last_to_first)
 
-        # Find there overlaps exist in reads
+        # Find where overlaps exist in reads
         print "[bogging " + getTime() + "] Searching for read overlaps"
         read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
 
