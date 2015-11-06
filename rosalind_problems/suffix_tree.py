@@ -67,10 +67,10 @@ class SuffixTree:
         self.active_edge = 0
         self.active_length = 0
 
-    '''__author__ = agolotin ''''
+    '''__author__ = agolotin '''
+    ''' Performs recursive depth first search of the suffix tree  
+        and returns the suffix array as a list '''
     def depthFirstSearch(self, main_edge = 1, traversed_so_far = 0):
-       ''' Performs recursive depth first search of the suffix tree  
-           and returns the suffix array as a list '''
         suffix_array = list()
         for edge_value, edge_index in sorted(self.nodes[main_edge].get_edges().iteritems()):
             if self.nodes[edge_index].get_end() == oo:
@@ -146,10 +146,14 @@ class SuffixTree:
             self.nodes[ self.need_link ].set_link( node )
         self.need_link = node
 
+    ''' Modified to output the starting and ending indicies of an edge '''
     def edge_string( self, node ):
         start = self.nodes[ node ].get_start()
         end = min( self.pos + 1, self.nodes[ node ].get_end() )
-        return self.text[ start : end ]
+        _str = self.text[start:end]
+        _str += " " + str(self.nodes[node].get_start()) + ", "
+        _str += "$" if self.nodes[node].get_end() == oo else str(self.nodes[node].get_end())
+        return _str
 
     def print_tree(self ):
         self.print_edges( self.root )
@@ -165,7 +169,7 @@ class SuffixTree:
         self.print_gv_internal_nodes( self.root )
         print "//------edges------"
         self.print_gv_edges( self.root )
-        print "//------suffix links------"
+        #print "//------suffix links------"
         #self.print_gv_suffix_links( self.root )
         print "}"
 
