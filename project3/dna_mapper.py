@@ -36,7 +36,7 @@ class overlapFinder(object):
 
             lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
 
-        print "[Logging " + getTime() + "] Read '" + read[0] + "'+ has been mapped"
+        print "[Logging " + getTime() + "] Read '" + read[0] + "' has been mapped"
         return list(set([self.suffix_array[i] for i in lft_indicies]))
 
 '''

@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import sys
+import operator
 
 oo = sys.maxint / 2 # oo is infinity
 
@@ -72,7 +73,7 @@ class SuffixTree:
         and returns the suffix array as a list '''
     def depthFirstSearch(self, main_edge = 1, traversed_so_far = 0):
         suffix_array = list()
-        for edge_value, edge_index in sorted(self.nodes[main_edge].get_edges().iteritems()):
+        for edge_value, edge_index in sorted(self.nodes[main_edge].get_edges().iteritems(), key=operator.itemgetter(0)):
             if self.nodes[edge_index].get_end() == oo:
                 suffix_array.append(self.nodes[edge_index].get_start() - traversed_so_far)
             else:
