@@ -67,26 +67,20 @@ class SuffixTree:
         self.active_edge = 0
         self.active_length = 0
 
+    '''__author__ = agolotin ''''
     def depthFirstSearch(self, main_edge = 1, traversed_so_far = 0):
+       ''' Performs recursive depth first search of the suffix tree  
+           and returns the suffix array as a list '''
         suffix_array = list()
         for edge_value, edge_index in sorted(self.nodes[main_edge].get_edges().iteritems()):
             if self.nodes[edge_index].get_end() == oo:
-                print edge_index
-                print self.nodes[edge_index].str_val()
                 suffix_array.append(self.nodes[edge_index].get_start() - traversed_so_far)
             else:
-                print edge_index
-                print self.nodes[edge_index].str_val()
                 traversed_so_far += self.nodes[edge_index].get_end() - self.nodes[edge_index].get_start()
                 suffix_array += self.depthFirstSearch(edge_index, traversed_so_far)
                 traversed_so_far -= self.nodes[edge_index].get_end() - self.nodes[edge_index].get_start()
 
         return suffix_array
-
-#        print self.nodes[1].str_val()
-#        print self.nodes[10].str_val()
-#        print self.nodes[24].str_val()
-#        print "SA: " + str(self.nodes[24].start - 1)
 
     def add_char( self, c ):
         self.text += c
