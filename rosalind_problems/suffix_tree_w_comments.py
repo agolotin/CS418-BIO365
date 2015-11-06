@@ -67,27 +67,6 @@ class SuffixTree:
         self.active_edge = 0
         self.active_length = 0
 
-    def depthFirstSearch(self, main_edge = 1, traversed_so_far = 0):
-        suffix_array = list()
-        for edge_value, edge_index in sorted(self.nodes[main_edge].get_edges().iteritems()):
-            if self.nodes[edge_index].get_end() == oo:
-                print edge_index
-                print self.nodes[edge_index].str_val()
-                suffix_array.append(self.nodes[edge_index].get_start() - traversed_so_far)
-            else:
-                print edge_index
-                print self.nodes[edge_index].str_val()
-                traversed_so_far += self.nodes[edge_index].get_end() - self.nodes[edge_index].get_start()
-                suffix_array += self.depthFirstSearch(edge_index, traversed_so_far)
-                traversed_so_far -= self.nodes[edge_index].get_end() - self.nodes[edge_index].get_start()
-
-        return suffix_array
-
-#        print self.nodes[1].str_val()
-#        print self.nodes[10].str_val()
-#        print self.nodes[24].str_val()
-#        print "SA: " + str(self.nodes[24].start - 1)
-
     def add_char( self, c ):
         self.text += c
         self.pos += 1
@@ -97,36 +76,70 @@ class SuffixTree:
 
         # while there are suffixes to be added
         while self.r > 0:
+            # set the active edge
+            # if the active length is 0, set it to the current position
             if self.active_length == 0:
                 self.active_edge = self.pos
-
+            # if active_edge is in active_nodes list of edges
             if self.get_active_edge() not in self.nodes[self.active_node].get_edges():
+                # the dege doesn't exist, create a new leaf node
                 leaf = self.new_node(self.pos, oo)
+                # add the leaf node as a child node and use the active_edge as the key for the edge
                 self.nodes[self.active_node].put_edge(self.get_active_edge(), leaf)
+                # check to see if you need to add a suffix link to the active node
                 self.add_suffix_link(self.active_node)
+            # else
             else:
+                # the edge does exist
+                # set nex = the node to walk down
                 nex = self.nodes[self.active_node].get_edge(self.get_active_edge())#node that we are going to walk down
+                # walk_down nex
                 if self.walk_down(nex):
                     continue
+                # if the current character is the same as the character as pos active_length in the node nex
                 if self.text[self.nodes[nex].get_start() + self.active_length] == c:
+                    # it is, so we increment the active length
                     self.active_length += 1
+                    # we add a suffix link to the active node
                     self.add_suffix_link(self.active_node)
+                    # no longer need to continue as the current string is subsumed in the
+                    # the current node, so we break out of the while loop
+                    # we have no more nodes to add or edges to split
                     break
 
+                # if the current character is not subsumed within the current node,
+                # this means that we must split a node
+                # create a new node called 'split' where:
+                #   start = nex's start
+                #   end = nex's start + the active_length
                 split = self.new_node(self.nodes[nex].get_start(),
                                       self.nodes[nex].get_start() + self.active_length)
+                # add split as an edge in active_node where the key is the active_edge
                 self.nodes[self.active_node].put_edge(self.get_active_edge(), split)
+                # createa  new leaf, node( current_position, #)
                 leaf = self.new_node(self.pos, oo)
+                # add leaf as an edge to the node split with c as the key
                 self.nodes[split].put_edge(c, leaf)
+                # change the start position of nex by incrementing it by active_length
                 self.nodes[nex].increment_start(self.active_length)
+                # add nex as an edge to split using the character referred to by
+                # the new start position of nex 
                 self.nodes[split].put_edge(self.text[self.nodes[nex].get_start()], nex)
+                # add a suffix link
                 self.add_suffix_link(split)
 
+            # decrement remainder because we've added a suffix
             self.r -= 1
+            # if the active node is root and the active_length is > 0
             if self.active_node == self.root and self.active_length > 0:
+                # decrement the active_length
                 self.active_length -= 1
+                # set active_edge to the (current position - the number of suffixes to add + 1)
                 self.active_edge = self.pos - self.r + 1
+            # else
             else:
+                # set the active node to the node pointed to by the active_node's link if it has a link
+                # if it doesn't have a link, set it to root
                 self.active_node = self.nodes[self.active_node].get_link() if self.nodes[self.active_node].get_link() > 0 else self.root
 
     def walk_down( self, nex ):
@@ -136,7 +149,6 @@ class SuffixTree:
             self.active_node = nex
             return True
         return False
-
 
     def get_active_edge( self ):
         return self.text[ self.active_edge ]
