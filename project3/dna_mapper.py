@@ -3,8 +3,10 @@ from suffix_tree import SuffixTree
 from collections import defaultdict
 from datetime import datetime
 import itertools
-import operator
+import operator 
+import pickle
 import sys
+import os
 
 ''' Get current date and time for the logger '''
 def getTime():
@@ -52,22 +54,22 @@ class overlapFinder(object):
                             self.first_rotation.index(previous_bw[-1]) + 1) 
                             if self.bw_transform[index][0] == next_char 
                             and self.first_rotation[index][0] == cur_char]
-            print "first rotation " + str(len(self.first_rotation))
-            print "bw transform " + str(len(self.bw_transform))
-            print "ltf " + str(len(self.last_to_first))
-
-            print first_indicies
+#            print "first rotation " + str(len(self.first_rotation))
+#            print "bw transform " + str(len(self.bw_transform))
+#            print "ltf " + str(len(self.last_to_first))
+#
+#            print first_indicies
             bw_indicies = [index for index in xrange(first_indicies[0],first_indicies[-1]+1) 
                 if self.bw_transform[index][0] == next_char]
 
-            print bw_indicies
+#            print bw_indicies
             previous_bw = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
 
-            print previous_bw
+#            print previous_bw
             lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
-            print lft_indicies
+#            print lft_indicies
 
-        print "[Logging " + getTime() + "] " + read[0] + " has been mapped"
+        print "[Logging {0}] {1} has been mapped".format(getTime(), read[0])
         return list(set([self.suffix_array[i] for i in lft_indicies]))
 
 '''
@@ -152,11 +154,44 @@ def createSam(reference, read_overlaps, output=""):
 
     return output
 
+def loadOverlapFinder(filename, main_sequence, reads):
+
+    if os.path.isfile("saved_objects/{0}.p".format(filename)):
+        print "[Logging {0}] Loading previously constructed objects for this project".format(getTime())
+        return pickle.load(open("saved_objects/{0}.p".format(filename), "r"))
+    else:
+        print "[Logging {0}] Creating a new finder object for input files".format(getTime())
+        return createNewOverlapFinder(filename, main_sequence, reads)
+
+def createNewOverlapFinder(filename, main_sequence, reads):
+
+        suffix_array = constructSuffixArray(main_sequence)
+        assert len(suffix_array) == len(main_sequence)
+        print "[Logging {0}] Suffix array constructed".format(getTime())
+
+        first_rotation, bw_transform = BurrowsWheelerTransform(main_sequence, suffix_array)
+        assert len(first_rotation) == len(bw_transform) == len(main_sequence)
+        print "[Logging {0}] The first rotation and the Burrows-Wheeler Transform constructed".format(getTime())
+
+        last_to_first = constructLTF(first_rotation, bw_transform)
+        assert len(last_to_first) == len(main_sequence)
+        print "[Logging {0}] Last-to-first array constructed".format(getTime())
+
+        # Custom data structure that holds all of the other necessary data structures.
+        finder = overlapFinder(suffix_array, first_rotation, bw_transform, last_to_first)
+        print "[Logging {0}] Overlap finder object constructed. Saving to file for future use".format(getTime())
+
+        # Saving the data structure for later use
+        output_file = "saved_objects/{0}.p".format(filename)
+        pickle.dump(finder, open(output_file, "wb+"))
+        print "[Logging {0}] Object saved successfully as {1}".format(getTime(), output_file)
+
+        return finder
+
 
 if __name__ == "__main__":
 
     try: 
-
         with open(sys.argv[1]) as fd:
             reference = fd.readline().strip()[1:]
             main_sequence = "".join([seq.strip().lower() for seq in fd]) + "$"
@@ -167,38 +202,27 @@ if __name__ == "__main__":
         sys.exit()
 
     try:
-
-        print "[Logging " + getTime() + "] Files loaded"
-        suffix_array = constructSuffixArray(main_sequence)
-        assert len(suffix_array) == len(main_sequence)
-
-        print "[Logging " + getTime() + "] Suffix array constructed"
-        first_rotation, bw_transform = BurrowsWheelerTransform(main_sequence, suffix_array)
-        assert len(first_rotation) == len(bw_transform) == len(main_sequence)
-
-        print "[Logging " + getTime() + "] The first rotation and the Burrows-Wheeler Transform constructed"
-        last_to_first = constructLTF(first_rotation, bw_transform)
-        assert len(last_to_first) == len(main_sequence)
-
-        print "[Logging " + getTime() + "] Last-to-first array constructed"
-        # Custom data structure that holds all of the other necessary data structures.
-        # Should be written to a file later
-        finder = overlapFinder(suffix_array, first_rotation, bw_transform, last_to_first)
+        main_filename = sys.argv[1].split("/")[-1]
+        pickle_filename = sys.argv[2].split("/")[-1]
+        
+        print "[Logging {0}] Files loaded".format(getTime())
+        finder = loadOverlapFinder(pickle_filename, main_sequence, reads)
 
         # Find where overlaps exist in reads
-        print "[Logging " + getTime() + "] Searching for read overlaps"
+        print "[Logging {0}] Searching for read overlaps".format(getTime())
         read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
 
-        print "[Logging " + getTime() + "] Read overlap map has been constructed"
+        print "[Logging {0}] Read overlap map has been constructed".format(getTime())
         sam_output = createSam(reference, read_overlaps)
         
-        with open(sys.argv[1] + ".sam", "w+") as fd:
+        with open("output_sam/{0}.sam".format(main_filename), "w+") as fd:
             fd.write(sam_output)
-        print "[Logging " + getTime() + "] SAM file was written into the working directory as " + sys.argv[1] + ".sam"
+
+        print "[Logging {0}] SAM file was written into the working directory as {1}.sam".format(getTime(), sys.argv[1])
 
     # Error occured when doing assertion
     except AssertionError:
-        print "[ERROR " + getTime() + "] Check assert statements. Lengths of certain data structures do not match"
+        print "[ERROR {0}] Check assert statements. Lengths of certain data structures do not match".format(getTime())
         sys.exit()
 
 
