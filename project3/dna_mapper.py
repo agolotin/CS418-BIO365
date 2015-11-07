@@ -1,5 +1,6 @@
 #! /usr/bin/env python
-from suffix_tree import SuffixTree from collections import defaultdict
+from suffix_tree import SuffixTree 
+from collections import defaultdict
 from datetime import datetime
 import itertools
 import operator
@@ -37,14 +38,34 @@ class overlapFinder(object):
             cur_char = reverse_read[i]
             next_char = reverse_read[i+1]
 
-            first_indicies = [index for index, value in enumerate(self.first_rotation) 
-                    if value[0] == cur_char and value in previous_bw]
+#            for index in xrange(self.first_rotation.index(previous_bw[0]), self.first_rotation.index(previous_bw[-1])):
+#                if self.bw_transform[index][0] == next_char:
+#                    print cur_char
+#                    print next_char
+#                    print self.first_rotation[index]
+#                    print self.bw_transform[index]
+#
+#            first_indicies = [index for index, value in enumerate(self.first_rotation)  #change it to previous_bw
+#                    if value[0] == cur_char and value in previous_bw]
 
-            bw_indicies = [index for index in range(first_indicies[0],first_indicies[-1]+1) 
-                    if self.bw_transform[index][0] == next_char]
+            first_indicies = [index for index in xrange(self.first_rotation.index(previous_bw[0]), 
+                            self.first_rotation.index(previous_bw[-1]) + 1) 
+                            if self.bw_transform[index][0] == next_char 
+                            and self.first_rotation[index][0] == cur_char]
+            print "first rotation " + str(len(self.first_rotation))
+            print "bw transform " + str(len(self.bw_transform))
+            print "ltf " + str(len(self.last_to_first))
+
+            print first_indicies
+            bw_indicies = [index for index in xrange(first_indicies[0],first_indicies[-1]+1) 
+                if self.bw_transform[index][0] == next_char]
+
+            print bw_indicies
             previous_bw = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
 
+            print previous_bw
             lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
+            print lft_indicies
 
         print "[Logging " + getTime() + "] " + read[0] + " has been mapped"
         return list(set([self.suffix_array[i] for i in lft_indicies]))
@@ -65,7 +86,7 @@ ltf: 1     8     12    2     13   14   0    9    3     4    5     6    15    16 
 
 
 main_sequence = "ACTGACATGACTGAACA$"
-reads = ["AACA"]
+reads = [('R1', 'ACT')]
 main_sequence = "AATCGGGTTCAATCGGGGT$"
 reads = ["ATCG", "GGGT"]
 '''
@@ -119,8 +140,7 @@ def constructLTF(first_rotation, bw_transform):
     return last_to_first
 
 ''' Creates a .sam file to be outputted '''
-def createSam(reference, read_overlaps):
-    output = ""
+def createSam(reference, read_overlaps, output=""):
 
     for read_tuple, overlap_indicies in read_overlaps:
         for overlap_index in overlap_indicies:
@@ -147,6 +167,7 @@ if __name__ == "__main__":
         sys.exit()
 
     try:
+
         print "[Logging " + getTime() + "] Files loaded"
         suffix_array = constructSuffixArray(main_sequence)
         assert len(suffix_array) == len(main_sequence)
@@ -165,7 +186,7 @@ if __name__ == "__main__":
         finder = overlapFinder(suffix_array, first_rotation, bw_transform, last_to_first)
 
         # Find where overlaps exist in reads
-        print "[bogging " + getTime() + "] Searching for read overlaps"
+        print "[Logging " + getTime() + "] Searching for read overlaps"
         read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
 
         print "[Logging " + getTime() + "] Read overlap map has been constructed"
