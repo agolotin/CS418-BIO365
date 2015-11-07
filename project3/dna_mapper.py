@@ -218,9 +218,8 @@ if __name__ == "__main__":
         with open("output_sam/{0}.sam".format(main_filename), "w+") as fd:
             fd.write(sam_output)
 
-        print "[Logging {0}] SAM file was written into the working directory as {1}.sam".format(getTime(), sys.argv[1])
+        print "[Logging {0}] SAM file was written into output_sam/ directory as {1}.sam".format(getTime(), main_filename)
 
-    # Error occured when doing assertion
     except AssertionError:
         print "[ERROR {0}] Check assert statements. Lengths of certain data structures do not match".format(getTime())
         sys.exit()
