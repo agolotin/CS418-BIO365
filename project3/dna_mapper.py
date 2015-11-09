@@ -1,6 +1,7 @@
 #! /usr/bin/env python
-from suffix_tree import SuffixTree 
+
 from collections import defaultdict
+from suffix_tree import SuffixTree 
 from datetime import datetime
 import itertools
 import operator 
@@ -30,54 +31,44 @@ class overlapFinder(object):
 
 
 
+
     def findOverlaps(self, read):
         reverse_read = read[1][::-1]
 
         lft_indicies = list()
-        previous_bw = self.first_rotation
+        bwt_values = self.first_rotation
 
-        for i in xrange(len(read[1])-1):
-            cur_char = reverse_read[i]
-            next_char = reverse_read[i+1]
+        try:
+            for i in xrange(len(read[1])-1):
+                cur_char = reverse_read[i]
+                next_char = reverse_read[i+1]
 
-#            for index in xrange(self.first_rotation.index(previous_bw[0]), self.first_rotation.index(previous_bw[-1])):
-#                if self.bw_transform[index][0] == next_char:
-#                    print cur_char
-#                    print next_char
-#                    print self.first_rotation[index]
-#                    print self.bw_transform[index]
-#
-#            first_indicies = [index for index, value in enumerate(self.first_rotation)  #change it to previous_bw
-#                    if value[0] == cur_char and value in previous_bw]
+                ''' First, find the range that the current nucleotide belongs to in the 1st rotation of the bwt 
+                    In the same step, filter all of the indicies that do not correspond to the correct nucleotide
+                    in the bwt '''
+                ''' Second, find all of the indicies in the bwt that correspond to the indices in the 1st rotation,
+                    but also match the next character in sequence '''
+                bw_indicies = [index for index in xrange(self.first_rotation.index(bwt_values[0]), 
+                                self.first_rotation.index(bwt_values[-1]) + 1) 
+                                if self.first_rotation[index][0] == cur_char
+                                and self.bw_transform[index][0] == next_char]
+                ''' Third, get the actual strings that correspnd to the first and the last bwt indicies
+                    found above '''
+                bwt_values = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
 
-            first_indicies = [index for index in xrange(self.first_rotation.index(previous_bw[0]), 
-                            self.first_rotation.index(previous_bw[-1]) + 1) 
-                            if self.bw_transform[index][0] == next_char 
-                            and self.first_rotation[index][0] == cur_char]
-#            print "first rotation " + str(len(self.first_rotation))
-#            print "bw transform " + str(len(self.bw_transform))
-#            print "ltf " + str(len(self.last_to_first))
-#
-#            print first_indicies
-            bw_indicies = [index for index in xrange(first_indicies[0],first_indicies[-1]+1) 
-                if self.bw_transform[index][0] == next_char]
+                lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
 
-#            print bw_indicies
-            previous_bw = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
-
-#            print previous_bw
-            lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
-#            print lft_indicies
-
-        print "[Logging {0}] {1} has been mapped".format(getTime(), read[0])
-        return list(set([self.suffix_array[i] for i in lft_indicies]))
+            print "[Logging {0}] {1} has been mapped".format(getTime(), read[0])
+            return list(set([self.suffix_array[i] for i in lft_indicies]))
+        except:
+            print "[Logging {0}] {1} does not map to anything in the genome".format(getTime(), read[0])
+            return None
 
 '''
 ACT
 T: ltf 10, 11
 C: ltf 5, 6
 sa[5] and sa[6] - the positions where text occurs
-
 eq:  A     C     T     G     A    C    A    T    G     A    C     T    G     A    A    C     A    $
 pos: 0     1     2     3     4    5    6    7    8     9    10    11   12    13   14   15    16   17
 sa:  17    16    13    14    4    9    0    6    15    5    10    1    12    3    8    11    2    7
@@ -144,9 +135,8 @@ def constructLTF(first_rotation, bw_transform):
 ''' Creates a .sam file to be outputted '''
 def createSam(reference, read_overlaps, output=""):
 
-    for read_tuple, overlap_indicies in read_overlaps:
+    for read_tuple, overlap_indicies in filter(lambda x: x[1] is not None, read_overlaps):
         for overlap_index in overlap_indicies:
-
             output += str(read_tuple[0]) + "\t0\t" 
             output += reference + "\t" + str(overlap_index+1)
             output += "\t" + str(255) + "\t" + str(len(read_tuple[1])) + "M"
@@ -212,14 +202,13 @@ if __name__ == "__main__":
         print "[Logging {0}] Searching for read overlaps".format(getTime())
         read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
 
-        print "[Logging {0}] Read overlap map has been constructed".format(getTime())
+        print "[Logging {0}] The genome has been successfully indexed".format(getTime())
         sam_output = createSam(reference, read_overlaps)
         
         with open("output_sam/{0}.sam".format(main_filename), "w+") as fd:
             fd.write(sam_output)
 
         print "[Logging {0}] SAM file was written into output_sam/ directory as {1}.sam".format(getTime(), main_filename)
-
     except AssertionError:
         print "[ERROR {0}] Check assert statements. Lengths of certain data structures do not match".format(getTime())
         sys.exit()
