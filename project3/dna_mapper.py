@@ -4,22 +4,10 @@ from collections import defaultdict
 from suffix_tree import SuffixTree 
 from datetime import datetime
 import itertools
-import operator 
 import pickle
 import sys
 import os
 
-''' Get current date and time for the logger '''
-def getTime():
-    current_time = datetime.now()
-
-    year = current_time.year
-    month = current_time.month
-    hour = current_time.hour
-    minute = current_time.minute
-    second = current_time.second
-
-    return "{0}/{1} {2}:{3}:{4}".format(year, month, hour, minute, second)
 
 class overlapFinder(object):
 
@@ -28,6 +16,22 @@ class overlapFinder(object):
         self.first_rotation = fr
         self.bw_transform  = bwt
         self.last_to_first = ltf
+    
+    '''
+    Example: find ACT
+    T: ltf 10, 11
+    C: ltf 5, 6
+    sa[5] and sa[6] - the positions where text occurs, 
+        precisely pos #9 and pos #0
+    eq:  A     C     T     G     A    C    A    T    G     A    C     T    G     A    A    C     A    $
+    pos: 0     1     2     3     4    5    6    7    8     9    10    11   12    13   14   15    16   17
+    sa:  17    16    13    14    4    9    0    6    15    5    10    1    12    3    8    11    2    7
+    1st: $_1   A_1   A_2   A_3   A_4  A_5  A_6  A_7  C_1   C_2  C_3   C_4  G_1   G_2  G_3  T_1   T_2  T_3
+    BWT: A_1   C_1   G_1   A_2   G_2  G_3  $_1  C_2  A_3   A_4  A_5   A_6  T_1   T_2  T_3  C_3   C_4  A_7
+    ltf: 1     8     12    2     13   14   0    9    3     4    5     6    15    16   17   10    11   7
+
+    main_sequence = "ACTGACATGACTGAACA$"
+    reads = [('R1', 'ACT')] '''
     
     ''' Function is used to actually find overlaps
         in reads. The main part of the project '''
@@ -63,33 +67,27 @@ class overlapFinder(object):
             print "[Logging {0}] {1} does not map to anything in the genome".format(getTime(), read[0])
             return None
 
-'''
-ACT
-T: ltf 10, 11
-C: ltf 5, 6
-sa[5] and sa[6] - the positions where text occurs
-eq:  A     C     T     G     A    C    A    T    G     A    C     T    G     A    A    C     A    $
-pos: 0     1     2     3     4    5    6    7    8     9    10    11   12    13   14   15    16   17
-sa:  17    16    13    14    4    9    0    6    15    5    10    1    12    3    8    11    2    7
-1st: $_1   A_1   A_2   A_3   A_4  A_5  A_6  A_7  C_1   C_2  C_3   C_4  G_1   G_2  G_3  T_1   T_2  T_3
-BWT: A_1   C_1   G_1   A_2   G_2  G_3  $_1  C_2  A_3   A_4  A_5   A_6  T_1   T_2  T_3  C_3   C_4  A_7
-ltf: 1     8     12    2     13   14   0    9    3     4    5     6    15    16   17   10    11   7
 
-main_sequence = "ACTGACATGACTGAACA$"
-reads = [('R1', 'ACT')]
-'''
 
+''' Get current date and time for the logger '''
+def getTime():
+    current_time = datetime.now()
+
+    year = current_time.year
+    month = current_time.month
+    hour = current_time.hour
+    minute = current_time.minute
+    second = current_time.second
+
+    return "{0}/{1} {2}:{3}:{4}".format(year, month, hour, minute, second)
 
 ''' Function constructs a suffix array by 
     first constructing a suffix tree and
     performing depth first search on it '''
 def constructSuffixArray(main_sequence):
-
     tree = SuffixTree(len(main_sequence))
-
     for char in main_sequence:
         tree.add_char(char)
-    #tree.print_graphviz_tree()
 
     return tree.depthFirstSearch()
 
@@ -125,12 +123,10 @@ def BurrowsWheelerTransform(seq, suffix_array):
     the first lexicographic rotation '''
 def constructLTF(first_rotation, bw_transform):
     last_to_first = [first_rotation.index(key) for key in bw_transform]
-
     return last_to_first
 
 ''' Creates a .sam file to be outputted '''
 def createSam(genome_header, read_overlaps, output=""):
-
     for read_tuple, overlap_indicies in filter(lambda x: x[1] is not None, read_overlaps):
         for overlap_index in overlap_indicies:
             output += str(read_tuple[0]) + "\t0\t" 
