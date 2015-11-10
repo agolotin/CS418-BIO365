@@ -28,7 +28,9 @@ class overlapFinder(object):
         self.first_rotation = fr
         self.bw_transform  = bwt
         self.last_to_first = ltf
-
+    
+    ''' Function is used to actually find overlaps
+        in reads. The main part of the project '''
     def findOverlaps(self, read):
         reverse_read = read[1][::-1]
 
@@ -78,8 +80,9 @@ reads = [('R1', 'ACT')]
 '''
 
 
-''' Function constructs a suffix array from 
-    first constructing a suffix tree '''
+''' Function constructs a suffix array by 
+    first constructing a suffix tree and
+    performing depth first search on it '''
 def constructSuffixArray(main_sequence):
 
     tree = SuffixTree(len(main_sequence))
@@ -126,12 +129,12 @@ def constructLTF(first_rotation, bw_transform):
     return last_to_first
 
 ''' Creates a .sam file to be outputted '''
-def createSam(reference, read_overlaps, output=""):
+def createSam(genome_header, read_overlaps, output=""):
 
     for read_tuple, overlap_indicies in filter(lambda x: x[1] is not None, read_overlaps):
         for overlap_index in overlap_indicies:
             output += str(read_tuple[0]) + "\t0\t" 
-            output += reference + "\t" + str(overlap_index+1)
+            output += genome_header + "\t" + str(overlap_index+1)
             output += "\t" + str(255) + "\t" + str(len(read_tuple[1])) + "M"
             output += "\t" + "*\t0\t0\t" + read_tuple[1] + "\t*\n"
 
@@ -142,19 +145,19 @@ def createSam(reference, read_overlaps, output=""):
     and will load it. Otherwise it will have to create all those objects
     and save them for the future use '''
 def loadOverlapFinder(filename, main_sequence, reads):
+    input_file = "saved_objects/{0}.p".format(filename)
 
-    if os.path.isfile("saved_objects/{0}.p".format(filename)):
+    if os.path.isfile(input_file):
         print "[Logging {0}] Loading previously constructed objects for this project".format(getTime())
+        return pickle.load(open(input_file, "r"))
 
-        return pickle.load(open("saved_objects/{0}.p".format(filename), "r"))
     else:
         print "[Logging {0}] Creating a new finder object for input files".format(getTime())
-
-        return createNewOverlapFinder(filename, main_sequence)
+        return createNewOverlapFinder(input_file, main_sequence)
 
 ''' Creates a new finder object with suffix array, bwt, 1st rotation, and lft indicies
     and saves it for future use '''
-def createNewOverlapFinder(filename, main_sequence):
+def createNewOverlapFinder(output_file, main_sequence):
 
         suffix_array = constructSuffixArray(main_sequence)
         assert len(suffix_array) == len(main_sequence)
@@ -173,9 +176,7 @@ def createNewOverlapFinder(filename, main_sequence):
         print "[Logging {0}] Overlap finder object constructed. Saving to file for future use".format(getTime())
 
         # Saving the data structure for later use
-        output_file = "saved_objects/{0}.p".format(filename)
         pickle.dump(finder, open(output_file, "wb+"))
-
         print "[Logging {0}] Object saved successfully as {1}".format(getTime(), output_file)
 
         return finder
@@ -183,33 +184,36 @@ def createNewOverlapFinder(filename, main_sequence):
 
 if __name__ == "__main__":
 
+    print "[Logging {0}] The program started. Loading the input files".format(getTime())
     try: 
         with open(sys.argv[1]) as fd:
-            reference = fd.readline().strip()[1:]
+            genome_header = fd.readline().strip()[1:]
             main_sequence = "".join([seq.strip().lower() for seq in fd]) + "$"
+
         with open(sys.argv[2]) as fd:
-            reads = [(header.strip()[1:], seq.strip().lower()) for header, seq in itertools.izip_longest(*[fd]*2)]
+            reads = [(header.strip()[1:], seq.strip().lower()) 
+                    for header, seq in itertools.izip_longest(*[fd]*2)]
     except IndexError:
         print "USAGE: python dna_mapper.py <chromosome_file> <reads_file>"
         sys.exit()
 
     try:
-        main_filename = sys.argv[1].split("/")[-1]
-        
         print "[Logging {0}] Files loaded".format(getTime())
+        main_filename = sys.argv[1].split("/")[-1]
+
         finder = loadOverlapFinder(main_filename, main_sequence, reads)
-
-        # Find where overlaps exist in reads. Output format: [((<read_name>,<sequence>), <position>))] 
         print "[Logging {0}] Searching for read overlaps".format(getTime())
-        read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
 
+        # Find where overlaps exist in reads. Output format: [((<read_name>,<sequence>), <position_in_genome>))] 
+        read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
         print "[Logging {0}] The genome has been successfully indexed".format(getTime())
-        sam_output = createSam(reference, read_overlaps)
+
+        sam_output = createSam(genome_header, read_overlaps)
         
         with open("output_sam/{0}.sam".format(main_filename), "w+") as fd:
             fd.write(sam_output)
+        print "[Logging {0}] SAM file was written as output_sam/{1}.sam".format(getTime(), main_filename)
 
-        print "[Logging {0}] SAM file was written into output_sam/ directory as {1}.sam".format(getTime(), main_filename)
     except AssertionError:
         print "[ERROR {0}] Check assert statements. Lengths of certain data structures do not match".format(getTime())
         sys.exit()
