@@ -40,11 +40,9 @@ class overlapFinder(object):
                 cur_char = reverse_read[i]
                 next_char = reverse_read[i+1]
 
-                ''' First, find the range that the current nucleotide belongs to in the 1st rotation of the bwt 
-                    In the same step, filter all of the indicies that do not correspond to the correct nucleotide
-                    in the bwt '''
+                ''' First, find the range that the current nucleotide belongs to in the 1st rotation of the bwt '''
                 ''' Second, find all of the indicies in the bwt that correspond to the indices in the 1st rotation,
-                    but also match the next character in sequence '''
+                    and also match the next character in sequence. Second step is met with the AND statement'''
                 bw_indicies = [index for index in xrange(self.first_rotation.index(bwt_values[0]), 
                                 self.first_rotation.index(bwt_values[-1]) + 1) 
                                 if self.first_rotation[index][0] == cur_char
@@ -53,6 +51,8 @@ class overlapFinder(object):
                     found above '''
                 bwt_values = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
 
+                ''' Fourth, find the last to first indicies that correspot to the first and the last burrows-wheeler 
+                    rotation indicies in case we are done mapping the read '''
                 lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
 
             print "[Logging {0}] {1} has been mapped".format(getTime(), read[0])
@@ -73,12 +73,8 @@ sa:  17    16    13    14    4    9    0    6    15    5    10    1    12    3  
 BWT: A_1   C_1   G_1   A_2   G_2  G_3  $_1  C_2  A_3   A_4  A_5   A_6  T_1   T_2  T_3  C_3   C_4  A_7
 ltf: 1     8     12    2     13   14   0    9    3     4    5     6    15    16   17   10    11   7
 
-
-
 main_sequence = "ACTGACATGACTGAACA$"
 reads = [('R1', 'ACT')]
-main_sequence = "AATCGGGTTCAATCGGGGT$"
-reads = ["ATCG", "GGGT"]
 '''
 
 
@@ -90,7 +86,7 @@ def constructSuffixArray(main_sequence):
 
     for char in main_sequence:
         tree.add_char(char)
-#    tree.print_graphviz_tree()
+    #tree.print_graphviz_tree()
 
     return tree.depthFirstSearch()
 
@@ -141,16 +137,24 @@ def createSam(reference, read_overlaps, output=""):
 
     return output
 
+''' If we have already tried to map a sequence we might have a file with all of the
+    necessary precomputed objects. This function will determine if such a file exists
+    and will load it. Otherwise it will have to create all those objects
+    and save them for the future use '''
 def loadOverlapFinder(filename, main_sequence, reads):
 
     if os.path.isfile("saved_objects/{0}.p".format(filename)):
         print "[Logging {0}] Loading previously constructed objects for this project".format(getTime())
+
         return pickle.load(open("saved_objects/{0}.p".format(filename), "r"))
     else:
         print "[Logging {0}] Creating a new finder object for input files".format(getTime())
-        return createNewOverlapFinder(filename, main_sequence, reads)
 
-def createNewOverlapFinder(filename, main_sequence, reads):
+        return createNewOverlapFinder(filename, main_sequence)
+
+''' Creates a new finder object with suffix array, bwt, 1st rotation, and lft indicies
+    and saves it for future use '''
+def createNewOverlapFinder(filename, main_sequence):
 
         suffix_array = constructSuffixArray(main_sequence)
         assert len(suffix_array) == len(main_sequence)
@@ -171,6 +175,7 @@ def createNewOverlapFinder(filename, main_sequence, reads):
         # Saving the data structure for later use
         output_file = "saved_objects/{0}.p".format(filename)
         pickle.dump(finder, open(output_file, "wb+"))
+
         print "[Logging {0}] Object saved successfully as {1}".format(getTime(), output_file)
 
         return finder
@@ -190,12 +195,11 @@ if __name__ == "__main__":
 
     try:
         main_filename = sys.argv[1].split("/")[-1]
-        pickle_filename = sys.argv[2].split("/")[-1]
         
         print "[Logging {0}] Files loaded".format(getTime())
-        finder = loadOverlapFinder(pickle_filename, main_sequence, reads)
+        finder = loadOverlapFinder(main_filename, main_sequence, reads)
 
-        # Find where overlaps exist in reads
+        # Find where overlaps exist in reads. Output format: [((<read_name>,<sequence>), <position>))] 
         print "[Logging {0}] Searching for read overlaps".format(getTime())
         read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
 
@@ -209,5 +213,3 @@ if __name__ == "__main__":
     except AssertionError:
         print "[ERROR {0}] Check assert statements. Lengths of certain data structures do not match".format(getTime())
         sys.exit()
-
-
