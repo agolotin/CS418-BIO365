@@ -16,13 +16,16 @@ class overlapFinder(object):
         self.first_rotation = fr
         self.bw_transform  = bwt
         self.last_to_first = ltf
+
+    def generateKmers(self, seq, k):
+        return [seq[i:i+k] for i in xrange(len(seq) - k + 1)]
     
     '''
     Example: find ACT
     T: ltf 10, 11
     C: ltf 5, 6
-    sa[5] and sa[6] - the positions where text occurs, 
-        precisely pos #9 and pos #0
+    sa[5] and sa[6] - the positions where the string ACT 
+        starts; precisely pos #9 and pos #0
     eq:  A     C     T     G     A    C    A    T    G     A    C     T    G     A    A    C     A    $
     pos: 0     1     2     3     4    5    6    7    8     9    10    11   12    13   14   15    16   17
     sa:  17    16    13    14    4    9    0    6    15    5    10    1    12    3    8    11    2    7
@@ -35,37 +38,54 @@ class overlapFinder(object):
     
     ''' Function is used to actually find overlaps
         in reads. The main part of the project '''
-    def findOverlaps(self, read):
-        reverse_read = read[1][::-1]
+    def findOverlaps(self, read, kmer_len, error):
+        kmer_map = defaultdict(int)
+        read_kmers = self.generateKmers(read[1], kmer_len)
 
-        lft_indicies = list()
-        bwt_values = self.first_rotation
+        for offset, kmer in enumerate(read_kmers):
+            reverse_kmer = kmer[::-1]
+            lft_indicies = list()
+            bwt_values = self.first_rotation
 
-        try:
-            for i in xrange(len(read[1])-1):
-                cur_char = reverse_read[i]
-                next_char = reverse_read[i+1]
+            try:
+                for i in xrange(len(kmer)-1):
+                    cur_char = reverse_kmer[i]
+                    next_char = reverse_kmer[i+1]
+                    ''' First, find the range that the current nucleotide belongs to in the 1st rotation of the bwt '''
+                    ''' Second, find all of the indicies in the bwt that correspond to the indices in the 1st rotation,
+                        and also match the next character in sequence. Second step is met with the AND statement'''
+                    bw_indicies = [index for index in xrange(self.first_rotation.index(bwt_values[0]), 
+                                    self.first_rotation.index(bwt_values[-1]) + 1) 
+                                    if self.first_rotation[index][0] == cur_char
+                                    and self.bw_transform[index][0] == next_char]
+                    ''' Third, get the actual strings that correspnd to the first and the last bwt indicies
+                        found above '''
+                    bwt_values = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
+                    ''' Fourth, find the last to first indicies that correspot to the first and the last burrows-wheeler 
+                        rotation indicies in case we are done mapping the read '''
+                    lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
+                
+                ''' Map part of the read to a dictionary of frequent kmers '''
+                for q in set(lft_indicies):
+                    kmer_map[self.suffix_array[q] - offset] += 1
 
-                ''' First, find the range that the current nucleotide belongs to in the 1st rotation of the bwt '''
-                ''' Second, find all of the indicies in the bwt that correspond to the indices in the 1st rotation,
-                    and also match the next character in sequence. Second step is met with the AND statement'''
-                bw_indicies = [index for index in xrange(self.first_rotation.index(bwt_values[0]), 
-                                self.first_rotation.index(bwt_values[-1]) + 1) 
-                                if self.first_rotation[index][0] == cur_char
-                                and self.bw_transform[index][0] == next_char]
-                ''' Third, get the actual strings that correspnd to the first and the last bwt indicies
-                    found above '''
-                bwt_values = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
+            except:
+                if error: 
+                    ''' The kmer did not map to anything in the genome, but 
+                        we know the dataset has errors, so we continue '''
+                    continue 
+                else:
+                    ''' Kmer did not map to anything and the dataset should not have had errors '''
+                    print "[Logging {0}] {1} does not map to anything in the genome".format(getTime(), read[0])
+                    return None
+        
+        ''' Get all of the positions in the genome where the read occurs '''
+        max_occur = max(kmer_map.values())
+        use_filter = lambda (k,v): v in xrange(max_occur-kmer_len, max_occur+kmer_len)
+        kmer_map = filter(use_filter, kmer_map.iteritems())
 
-                ''' Fourth, find the last to first indicies that correspot to the first and the last burrows-wheeler 
-                    rotation indicies in case we are done mapping the read '''
-                lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
-
-            print "[Logging {0}] {1} has been mapped".format(getTime(), read[0])
-            return list(set([self.suffix_array[i] for i in lft_indicies]))
-        except:
-            print "[Logging {0}] {1} does not map to anything in the genome".format(getTime(), read[0])
-            return None
+        print "[Logging {0}] {1} has been mapped".format(getTime(), read[0])
+        return [_kmer[0] for _kmer in kmer_map]
 
 
 
@@ -75,11 +95,12 @@ def getTime():
 
     year = current_time.year
     month = current_time.month
+    day = current_time.day
     hour = current_time.hour
     minute = current_time.minute
     second = current_time.second
 
-    return "{0}/{1} {2}:{3}:{4}".format(year, month, hour, minute, second)
+    return "{0}/{1}/{2} {3}:{4}:{5}".format(year, month, day, hour, minute, second)
 
 ''' Function constructs a suffix array by 
     first constructing a suffix tree and
@@ -189,8 +210,11 @@ if __name__ == "__main__":
         with open(sys.argv[2]) as fd:
             reads = [(header.strip()[1:], seq.strip().lower()) 
                     for header, seq in itertools.izip_longest(*[fd]*2)]
+        kmer_len = int(sys.argv[3])
+        errors = True if sys.argv[4][0].lower() == 'e' else False
+
     except IndexError:
-        print "USAGE: python dna_mapper.py <chromosome_file> <reads_file>"
+        print "USAGE: python dna_mapper.py <chromosome_file> <reads_file> <kmer_length> <errors | noerrors>"
         sys.exit()
 
     try:
@@ -200,8 +224,8 @@ if __name__ == "__main__":
         finder = loadOverlapFinder(main_filename, main_sequence, reads)
         print "[Logging {0}] Searching for read overlaps".format(getTime())
 
-        # Find where overlaps exist in reads. Output format: [((<read_name>,<sequence>), <position_in_genome>))] 
-        read_overlaps = [(single_read, finder.findOverlaps(single_read)) for single_read in reads]
+        # Find where overlaps exist in reads. Output format: [((<read_name>,<sequence>), <position_in_genome>)] 
+        read_overlaps = [(single_read, finder.findOverlaps(single_read, kmer_len, errors)) for single_read in reads]
         print "[Logging {0}] The genome has been successfully indexed".format(getTime())
 
         sam_output = createSam(genome_header, read_overlaps)
