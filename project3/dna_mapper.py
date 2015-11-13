@@ -16,6 +16,10 @@ class overlapFinder(object):
         self.first_rotation = fr
         self.bw_transform  = bwt
         self.last_to_first = ltf
+        self.unmapped_genes = list()
+
+    def getUnmappedGenes(self):
+        return self.unmapped_genes
 
     def generateKmers(self, seq, k):
         return [seq[i:i+k] for i in xrange(len(seq) - k + 1)]
@@ -32,9 +36,7 @@ class overlapFinder(object):
     1st: $_1   A_1   A_2   A_3   A_4  A_5  A_6  A_7  C_1   C_2  C_3   C_4  G_1   G_2  G_3  T_1   T_2  T_3
     BWT: A_1   C_1   G_1   A_2   G_2  G_3  $_1  C_2  A_3   A_4  A_5   A_6  T_1   T_2  T_3  C_3   C_4  A_7
     ltf: 1     8     12    2     13   14   0    9    3     4    5     6    15    16   17   10    11   7
-
-    main_sequence = "ACTGACATGACTGAACA$"
-    reads = [('R1', 'ACT')] '''
+    '''
     
     ''' Function is used to actually find overlaps
         in reads. The main part of the project '''
@@ -77,10 +79,18 @@ class overlapFinder(object):
                 else:
                     ''' Kmer did not map to anything and the dataset should not have had errors '''
                     print "[Logging {0}] {1} does not map to anything in the genome".format(getTime(), read[0])
+                    self.unmapped_genes.append(read[0])
                     return None
         
-        ''' Get all of the positions in the genome where the read occurs '''
         max_occur = max(kmer_map.values())
+        ''' If the most frequent occuring kmer occurs less than half of the time we can ignore the read altogether '''
+#        if max_occur < len(read_kmers) / 2:
+#            print "[Logging {0}] Ignored read {1}. Most occuring kmer of the 
+#                    read occurs too infrequently.".format(getTime(), read[0])
+#            self.unmapped_genes.append(read[0])
+#            return None
+
+        ''' Get all of the positions in the genome where the read occurs based on a range '''
         use_filter = lambda (k,v): v in xrange(max_occur-kmer_len, max_occur+kmer_len)
         kmer_map = filter(use_filter, kmer_map.iteritems())
 
@@ -209,7 +219,7 @@ if __name__ == "__main__":
 
         with open(sys.argv[2]) as fd:
             reads = [(header.strip()[1:], seq.strip().lower()) 
-                    for header, seq in itertools.izip_longest(*[fd]*2)]
+                    for header, seq, indentifier, quality in itertools.izip_longest(*[fd]*4)]
         kmer_len = int(sys.argv[3])
         errors = True if sys.argv[4][0].lower() == 'e' else False
 
@@ -217,23 +227,24 @@ if __name__ == "__main__":
         print "USAGE: python dna_mapper.py <chromosome_file> <reads_file> <kmer_length> <errors | noerrors>"
         sys.exit()
 
-    try:
-        print "[Logging {0}] Files loaded".format(getTime())
-        main_filename = sys.argv[1].split("/")[-1]
+    print "[Logging {0}] Files loaded".format(getTime())
+    main_filename = sys.argv[1].split("/")[-1]
 
-        finder = loadOverlapFinder(main_filename, main_sequence, reads)
-        print "[Logging {0}] Searching for read overlaps".format(getTime())
+    finder = loadOverlapFinder(main_filename, main_sequence, reads)
+    print "[Logging {0}] Searching for read overlaps".format(getTime())
 
-        # Find where overlaps exist in reads. Output format: [((<read_name>,<sequence>), <position_in_genome>)] 
-        read_overlaps = [(single_read, finder.findOverlaps(single_read, kmer_len, errors)) for single_read in reads]
-        print "[Logging {0}] The genome has been successfully indexed".format(getTime())
+    # Find where overlaps exist in reads. Output format: [((<read_name>,<sequence>), <position_in_genome>)] 
+    read_overlaps = [(single_read, finder.findOverlaps(single_read, kmer_len, errors)) for single_read in reads]
+    print "[Logging {0}] The genome has been successfully indexed".format(getTime())
 
-        sam_output = createSam(genome_header, read_overlaps)
-        
-        with open("output_sam/{0}.sam".format(main_filename), "w+") as fd:
-            fd.write(sam_output)
-        print "[Logging {0}] SAM file was written as output_sam/{1}.sam".format(getTime(), main_filename)
+    # Save the read overlaps just in case something goes wrong 
+    pickle.dump(read_overlaps, open(main_filename+".overlaps.p", "wb+"))
 
-    except AssertionError:
-        print "[ERROR {0}] Check assert statements. Lengths of certain data structures do not match".format(getTime())
-        sys.exit()
+    # Create output SAM file
+    sam_output = createSam(genome_header, read_overlaps)
+    with open("output_sam/{0}.sam".format(main_filename), "w+") as fd:
+        fd.write(sam_output)
+
+    print "[Logging {0}] SAM file was written as output_sam/{1}.sam".format(getTime(), main_filename)
+    print "[Logging {0}] There were {1} genes unmapped in total".format(getTime(), len(finder.getUnmappedGenes()))
+    print "\t".join(finger.getUnmappedGenes())
