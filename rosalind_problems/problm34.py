@@ -2,17 +2,7 @@
 
 import sys 
 
-def getHighestScore(scoring_matrix):
-    total_max = max( map(max, scoring_matrix) )
-    max_i, max_j = -1, -1
-
-    for i in range(len(scoring_matrix)):
-        if total_max in scoring_matrix[i]:
-            max_i, max_j = i, scoring_matrix[i].index(total_max)
-
-    return total_max, max_i, max_j
-
-def fittingAlignment(seq1, seq2):
+def overlapAlignment(seq1, seq2):
     #initialize scoring matrix
     scoring_matrix = [[0 for j in xrange(len(seq2)+1)] for i in xrange(len(seq1)+1)]
     backtrack = [[-100 for j in xrange(len(seq2)+1)] for i in xrange(len(seq1)+1)]
@@ -63,4 +53,4 @@ if __name__ == "__main__":
     with open(sys.argv[1]) as fd:
         seq1, seq2 = [seq.strip() for seq in fd]
 
-    print "\n".join(fittingAlignment(seq1, seq2))
+    print "\n".join(overlapAlignment(seq1, seq2))
