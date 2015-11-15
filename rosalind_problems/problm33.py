@@ -15,10 +15,7 @@ def fittingAlignment(seq1, seq2):
                       scoring_matrix[i-1][j-1] + match]
 
             scoring_matrix[i][j] = max(scores)
-            if scoring_matrix[i][j] == -1:
-                backtrack[i][j] = 2
-            else:
-                backtrack[i][j] = scores.index(scoring_matrix[i][j])
+            backtrack[i][j] = scores.index(scoring_matrix[i][j])
 
     j = len(seq2)
     i = max(enumerate([scoring_matrix[row][j] for row in xrange(len(seq2), len(seq1))]),key=lambda x: x[1])[0] + len(seq2)
