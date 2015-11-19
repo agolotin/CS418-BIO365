@@ -17,6 +17,7 @@ class overlapFinder(object):
         self.bw_transform  = bwt
         self.last_to_first = ltf
         self.unmapped_genes = list()
+        self.nucleotides = ["$1", "A1", "C1", "G1", "T1"]
 
     def getUnmappedGenes(self):
         return self.unmapped_genes
@@ -47,31 +48,38 @@ class overlapFinder(object):
         for offset, kmer in enumerate(read_kmers):
             reverse_kmer = kmer[::-1]
             lft_indicies = list()
-            bwt_values = self.first_rotation
+            if reverse_kmer[0] == "T":
+                lft_indicies = [self.first_rotation.index(reverse_kmer[0]+"1"), len(self.first_rotation)-1] 
+            else:
+                next_nucleotide = self.nucleotides[ self.nucleotides.index(reverse_kmer[0]+"1")+1 ]
+                lft_indicies = [self.first_rotation.index(reverse_kmer[0]+"1"), self.first_rotation.index(next_nucleotide)] 
 
             try:
                 for i in xrange(len(kmer)-1):
+#                    print kmer
+#                    print lft_indicies
                     cur_char = reverse_kmer[i]
                     next_char = reverse_kmer[i+1]
                     ''' First, find the range that the current nucleotide belongs to in the 1st rotation of the bwt '''
                     ''' Second, find all of the indicies in the bwt that correspond to the indices in the 1st rotation,
                         and also match the next character in sequence. Second step is met with the AND statement'''
-                    bw_indicies = [index for index in xrange(self.first_rotation.index(bwt_values[0]), 
-                                    self.first_rotation.index(bwt_values[-1]) + 1) 
-                                    if self.first_rotation[index][0] == cur_char
-                                    and self.bw_transform[index][0] == next_char]
+                    bwt_indicies = [index for index in xrange(lft_indicies[0], lft_indicies[-1]+1)
+                                    if self.bw_transform[index][0] == next_char]
+#                   print bwt_indicies
                     ''' Third, get the actual strings that correspnd to the first and the last bwt indicies
                         found above '''
-                    bwt_values = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
+                    #bwt_values = [self.bw_transform[bw_indicies[0]], self.bw_transform[bw_indicies[-1]]]
                     ''' Fourth, find the last to first indicies that correspot to the first and the last burrows-wheeler 
                         rotation indicies in case we are done mapping the read '''
-                    lft_indicies = [self.last_to_first[bw_indicies[0]], self.last_to_first[bw_indicies[-1]]]
+                    lft_indicies = [self.last_to_first[bwt_indicies[0]], self.last_to_first[bwt_indicies[-1]]]
+#                    print lft_indicies
                 
                 ''' Map part of the read to a dictionary of frequent kmers '''
-                for q in set(lft_indicies):
+                for q in range(lft_indicies[0], lft_indicies[-1]+1):
                     kmer_map[self.suffix_array[q] - offset] += 1
 
-            except:
+            except Exception as ex:
+#               print ex
                 if error: 
                     ''' The kmer did not map to anything in the genome, but 
                         we know the dataset has errors, so we continue '''
@@ -84,14 +92,13 @@ class overlapFinder(object):
         
         max_occur = max(kmer_map.values())
         ''' If the most frequent occuring kmer occurs less than half of the time we can ignore the read altogether '''
-#        if max_occur < len(read_kmers) / 2:
-#            print "[Logging {0}] Ignored read {1}. Most occuring kmer of the 
-#                    read occurs too infrequently.".format(getTime(), read[0])
-#            self.unmapped_genes.append(read[0])
-#            return None
+        if max_occur < len(read_kmers) / 4:
+            print "[Logging {0}] Ignored read {1}. Most occuring kmer of the read occurs too infrequently.".format(getTime(), read[0])
+            self.unmapped_genes.append(read[0])
+            return None
 
         ''' Get all of the positions in the genome where the read occurs based on a range '''
-        use_filter = lambda (k,v): v in xrange(max_occur-kmer_len, max_occur+kmer_len)
+        use_filter = lambda (k,v): v in xrange(max_occur-(kmer_len/2), max_occur+(kmer_len/2))
         kmer_map = filter(use_filter, kmer_map.iteritems())
 
         print "[Logging {0}] {1} has been mapped".format(getTime(), read[0])
@@ -215,11 +222,11 @@ if __name__ == "__main__":
     try: 
         with open(sys.argv[1]) as fd:
             genome_header = fd.readline().strip()[1:]
-            main_sequence = "".join([seq.strip().lower() for seq in fd]) + "$"
+            main_sequence = "".join([seq.strip().upper() for seq in fd]) + "$"
 
         with open(sys.argv[2]) as fd:
-            reads = [(header.strip()[1:], seq.strip().lower()) 
-                    for header, seq, indentifier, quality in itertools.izip_longest(*[fd]*4)]
+            reads = [(header.strip()[1:], seq.strip().upper()) 
+                    for header, seq in itertools.izip_longest(*[fd]*2)]
         kmer_len = int(sys.argv[3])
         errors = True if sys.argv[4][0].lower() == 'e' else False
 
@@ -247,4 +254,3 @@ if __name__ == "__main__":
 
     print "[Logging {0}] SAM file was written as output_sam/{1}.sam".format(getTime(), main_filename)
     print "[Logging {0}] There were {1} genes unmapped in total".format(getTime(), len(finder.getUnmappedGenes()))
-    print "\t".join(finger.getUnmappedGenes())
