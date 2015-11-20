@@ -37,7 +37,7 @@ class overlapFinder(object):
         self.last_to_first = ltf
 
 
-def Run(reads, read_overlaps=[]):
+def run(reads, read_overlaps=[]):
     Noccurs = True if "n1" in finder.first_rotation else False
     nucleotides = ["$1", "a1", "c1", "g1", "t1"]
     if Noccurs:
@@ -87,17 +87,18 @@ def findOverlaps(read, k_len, Noccurs, nucleotides):
 
                 lft_indicies = [finder.last_to_first[bwt_indicies[0]], finder.last_to_first[bwt_indicies[-1]]]
             
-            ''' Map part of the read to a dictionary of frequent kmers '''
+            ''' Map part of the read to a sequence and save it into dictionary of frequent kmers '''
             for q in xrange(lft_indicies[0], lft_indicies[-1]+1):
                 kmer_map[finder.suffix_array[q] - offset] += 1
 
         except:
             if not errors:
+                ''' Kmer did not map and there should have been no errors in reads '''
                 print "[Logging {0}] Ignored read {1}. Dataset should have no errors.".format(getTime(), read[0])
                 return None
-            ''' The kmer did not map to anything in the genome, but 
-                we know the dataset has errors, so we continue '''
             if read_len != k_len:
+                ''' The kmer did not map to anything in the genome, but 
+                    we know the dataset has errors, so we continue '''
                 continue
             else:
                 ''' Keep on looking for overlaps using different 
@@ -105,9 +106,9 @@ def findOverlaps(read, k_len, Noccurs, nucleotides):
                 return findOverlaps(read, kmer_len, Noccurs, nucleotides)
 
     if read_len != k_len:
-        # Check to see if kmer_map was populated at all, aka at least one read maps to something
+        # Check to see if kmer_map was populated at all, aka at least one kmer maps to something
         max_occur = max(kmer_map.values()) if len(kmer_map) > 0 else 0
-        ''' If the most frequent occuring kmer occurs less than half of the time we can ignore the read altogether '''
+        # If the most frequent occuring kmer occurs less than half of the time we can ignore the read altogether
         if max_occur < len(read_kmers) / 4:
             print "[Logging {0}] Ignored read {1}. Most occuring kmer of the read occurs {2} times out of {3} kmers.".format(getTime(), read[0], max_occur, len(read_kmers))
             return None
@@ -123,7 +124,7 @@ def findOverlaps(read, k_len, Noccurs, nucleotides):
     return [_kmer[0] for _kmer in kmer_map]
 # ====================================================================
 
-# ====================== REST OF THE PROJECT =============================
+# ====================== SA, 1st, BWT, LTF ===========================
 def constructSuffixArray(main_sequence):
     tree = SuffixTree(len(main_sequence))
     for char in main_sequence:
@@ -163,7 +164,6 @@ def loadOverlapFinder(filename, main_sequence):
     if os.path.isfile(input_file):
         print "[Logging {0}] Loading previously constructed objects for this project".format(getTime())
         return pickle.load(open(input_file, "r"))
-
     else:
         print "[Logging {0}] Creating a new finder object for input files".format(getTime())
         return createNewOverlapFinder(input_file, main_sequence)
@@ -210,8 +210,17 @@ if __name__ == "__main__":
             main_sequence = "".join([seq.strip().lower() for seq in fd]) + "$"
 
         with open(sys.argv[2]) as fd:
-            reads = [(header.strip()[1:], seq.strip().lower()) 
-                    for header, seq, indentifier, quality in itertools.izip_longest(*[fd]*4)] 
+            # Read in first 4 lines to check whether it's a fasta or fastq file
+            test_reads = [ next(fd).strip()[1:] if idx % 2 == 0 else next(fd).strip().lower() for idx in xrange(4) ]
+            if test_reads[2] == "":
+                step = 4 # In case it's a fastq file read 4 lines at a time
+                test_reads = [tuple(test_reads[:2])]
+            else:
+                step = 2 # In case it's a fasta file read 2 lines at a time
+                test_reads = [tuple(test_reads)]
+
+            reads = test_reads + [(single_read[0].strip()[1:], single_read[1].strip().lower()) 
+                    for single_read in itertools.izip_longest(*[fd]*step)]
 
         errors = True if sys.argv[3][0].lower() == 'e' else False
         print "[Logging {0}] Errors in reads: {1}".format(getTime(), errors)
@@ -223,19 +232,28 @@ if __name__ == "__main__":
             print "[Logging {0}] Chunk number: {1}".format(getTime(), chunk)
 
     except IndexError:
-        print "USAGE: python dna_mapper_optimal.py <chromosome_file> <reads_file> <errors | noerrors> <kmer_length> <chunk_num>"
-        print "Kmer length should be specified in case there are errors in reads"
-        print "Chunk number should be specified in case there are errors and the dataset is split into parts"
-        print "Otherwise, kmer length and chunk number do not need to be specified"
+        print "USAGE: python dna_mapper_threadded.py <chromosome_file> <reads_file> <errors | noerrors> <kmer_length> <chunk_num>"
+        print "\t<errors> flag should be specified as \"errors\" or \"noerrors\""
+        print "\t<kmer_len> should be specified in case <error> flag is set to True"
+        print "\t<chunk_num> is an optional parameter that represents which part of a large file is being processed"
+        print "\tIn the error on the command line is specified as <noerror>, then <kmer_len> and <chunk_num> params are ignored"
         sys.exit()
+    
+    # Make sure the necessary directories exist
+    print "[Logging {0}] Making sure the necessary directories exist.".format(getTime())
+    if not os.path.exists("output_sam"):
+        os.makedirs("output_sam")
+    if not os.path.exists("saved_objects"):
+        os.makedirs("saved_objects")
+    # =========================================
 
     print "[Logging {0}] Input files loaded.".format(getTime())
     main_filename = sys.argv[1].split("/")[-1]
     finder = loadOverlapFinder(main_filename, main_sequence)
 
-    print "[Logging {0}] Searching for read overlaps".format(getTime())
-    read_overlaps = Run(reads)
-    print "[Logging {0}] The genome has been successfully indexed".format(getTime())
+    print "[Logging {0}] Searching for read overlaps.".format(getTime())
+    read_overlaps = run(reads)
+    print "[Logging {0}] The genome was successfully indexed.".format(getTime())
     # ===========================================================
 
     # Create output SAM file
@@ -244,12 +262,12 @@ if __name__ == "__main__":
     if not errors: 
         outfile_name = "output_sam/{0}.sam".format(main_filename)
     else:
-        if len(sys.argv) == 6:
-            outfile_name = "output_sam/chunk{0}_kmerlen{1}_{2}.sam".format(chunk, kmer_len, main_filename)
-        else:
+        if len(sys.argv) != 6:
             outfile_name = "output_sam/kmerlen{0}_{1}.sam".format(kmer_len, main_filename)
+        else:
+            outfile_name = "output_sam/chunk{0}_kmerlen{1}_{2}.sam".format(chunk, kmer_len, main_filename)
     # ===========================================================
     with open(oufile_name, "w+") as fd:
         fd.write(sam_output)
 
-    print "[Logging {0}] SAM file was written as {1}".format(getTime(), outfile_name)
+    print "[Logging {0}] SAM file was written as {1}.".format(getTime(), outfile_name)
