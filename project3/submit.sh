@@ -22,20 +22,20 @@ kmer_size=
 
 while test $# -gt 0
 do
-	case $1 in
-		-c)
-			chunk=$2
-			shift
-			;;
-		-k)
-			kmer_size=$2
-			shift
-			;;
-		*) 
-			echo >&2 "Invalid argument: $1"
-			;;
-	esac
-	shift
+  case $1 in
+    -c)
+      chunk=$2
+      shift
+      ;;
+    -k)
+      kmer_size=$2
+      shift
+      ;;
+    *) 
+      echo >&2 "Invalid argument: $1"
+      ;;
+  esac
+  shift
 done
 
 ./dna_mapper_optimal.py shotgun_small/chr19.small.error.fastq shotgun_small/chunk$chunk\.chr19.small.error.reads.fastq $kmer_size $chunk
