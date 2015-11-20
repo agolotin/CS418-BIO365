@@ -1,5 +1,4 @@
 Gene1-320	0	Chr19Partial	1650	255	50M	*	0	0	tgcgaacaccaagctcaacaatgagccctggaaaatttctggaatggatt	*
-Gene1-319	0	Chr19Partial	2613	255	50M	*	0	0	gctgtgctggggcctgagccgggtggtggggagagagtctctcccctgcc	*
 Gene1-318	0	Chr19Partial	2056	255	50M	*	0	0	cacacaggggaagggtaagctggtttcatgatcgaatcaaggctcagaca	*
 Gene1-317	0	Chr19Partial	2080	255	50M	*	0	0	ttcatgatcgaatcaaggctcagacaatttttaaaggccagagggtagac	*
 Gene1-316	0	Chr19Partial	2316	255	50M	*	0	0	aaaggcaatgagatcttagggcacacagctccccgcccctcttctgccct	*
@@ -5687,6 +5686,7 @@ Gene5-2595	0	Chr19Partial	77822	255	50M	*	0	0	ccagaactctttctgtgcatggcccagcccccta
 Gene5-2594	0	Chr19Partial	74358	255	50M	*	0	0	agtaggtatttttcataggaacttgaccattccttatgattgtcaaattt	*
 Gene5-2593	0	Chr19Partial	80502	255	50M	*	0	0	tcaggacaaatagctaatgcatgcagggcctcatacctaggtgatgggtt	*
 Gene5-2592	0	Chr19Partial	78400	255	50M	*	0	0	gatgcatgcaaagtcagcttttttttttctttttgtgacccagcagaatg	*
+Gene5-2591	0	Chr19Partial	80330	255	50M	*	0	0	gacagggggtaggagaccatcaggacaaacacgtgggtacatggagggga	*
 Gene5-2591	0	Chr19Partial	80253	255	50M	*	0	0	gacagggggtaggagaccatcaggacaaacacgtgggtacatggagggga	*
 Gene5-2591	0	Chr19Partial	80407	255	50M	*	0	0	gacagggggtaggagaccatcaggacaaacacgtgggtacatggagggga	*
 Gene5-2590	0	Chr19Partial	80250	255	50M	*	0	0	ggggacagggggtaggagaccatcaggacaaacacgtgggtacatggagg	*
@@ -5750,6 +5750,7 @@ Gene5-2536	0	Chr19Partial	79982	255	50M	*	0	0	tgcagccgttaaaataaatgagatcatgttcttt
 Gene5-2535	0	Chr19Partial	79353	255	50M	*	0	0	ccagcaatccctttactggatatatgcccaaaggaatataaatcattcta	*
 Gene5-2534	0	Chr19Partial	74632	255	50M	*	0	0	aaatagagctaccatgtggtccagcaatcccactgctgcatatatacccc	*
 Gene5-2533	0	Chr19Partial	76229	255	50M	*	0	0	ttgctgtgcagaagctttttaggttgatgctattccatttgtgttttgtt	*
+Gene5-2532	0	Chr19Partial	80339	255	50M	*	0	0	taggagaccatcaggacaaacacgtgggtacatggaggggaacaacacac	*
 Gene5-2532	0	Chr19Partial	80262	255	50M	*	0	0	taggagaccatcaggacaaacacgtgggtacatggaggggaacaacacac	*
 Gene5-2532	0	Chr19Partial	80416	255	50M	*	0	0	taggagaccatcaggacaaacacgtgggtacatggaggggaacaacacac	*
 Gene5-2531	0	Chr19Partial	77500	255	50M	*	0	0	ttataagaaatcgacacaaaccttcatggaaggctgggggtgttgtatag	*
@@ -6243,6 +6244,7 @@ Gene5-2046	0	Chr19Partial	75835	255	50M	*	0	0	ctgtcttttacaatggctgaaatagtttacattc
 Gene5-2045	0	Chr19Partial	75831	255	50M	*	0	0	tatactgtcttttacaatggctgaaatagtttacattctcaacaattaca	*
 Gene5-2044	0	Chr19Partial	80273	255	50M	*	0	0	caggacaaacacgtgggtacatggaggggaacaacacacaccagggcctc	*
 Gene5-2044	0	Chr19Partial	80427	255	50M	*	0	0	caggacaaacacgtgggtacatggaggggaacaacacacaccagggcctc	*
+Gene5-2044	0	Chr19Partial	80350	255	50M	*	0	0	caggacaaacacgtgggtacatggaggggaacaacacacaccagggcctc	*
 Gene5-2043	0	Chr19Partial	75505	255	50M	*	0	0	agattatgcagtatctggctttctgtgcctggattattttactcagtata	*
 Gene5-2042	0	Chr19Partial	77067	255	50M	*	0	0	attttgtatgttcacattgtatcctgcaactttactaaattcatttatga	*
 Gene5-2041	0	Chr19Partial	74208	255	50M	*	0	0	ttaaatatttggtaatatttctttattaaatattgcatccacctagccct	*
@@ -6287,6 +6289,7 @@ Gene5-2003	0	Chr19Partial	77612	255	50M	*	0	0	gtgcaaaggaatgtaagggagtttatctaaataa
 Gene5-2001	0	Chr19Partial	77518	255	50M	*	0	0	aaccttcatggaaggctgggggtgttgtatagcttcagtaatagatctga	*
 Gene5-2000	0	Chr19Partial	80266	255	50M	*	0	0	agaccatcaggacaaacacgtgggtacatggaggggaacaacacacacca	*
 Gene5-2000	0	Chr19Partial	80420	255	50M	*	0	0	agaccatcaggacaaacacgtgggtacatggaggggaacaacacacacca	*
+Gene5-2000	0	Chr19Partial	80343	255	50M	*	0	0	agaccatcaggacaaacacgtgggtacatggaggggaacaacacacacca	*
 Gene5-1999	0	Chr19Partial	75620	255	50M	*	0	0	attctattgtgtatgtgtgccacattttcttcatccactcatgtgtcgat	*
 Gene5-1998	0	Chr19Partial	75428	255	50M	*	0	0	acccaatcctcctggtaaccatcattctactctgtacttctatgtgttca	*
 Gene5-1997	0	Chr19Partial	79806	255	50M	*	0	0	tacacatatatatacatattataactacatatatatacacacacacatac	*
@@ -6710,6 +6713,7 @@ Gene5-1584	0	Chr19Partial	77494	255	50M	*	0	0	agatagttataagaaatcgacacaaaccttcatg
 Gene5-1583	0	Chr19Partial	79464	255	50M	*	0	0	ggaggccaaggcgggtggatcacctgaggacaggagtttgagaccagcct	*
 Gene5-1582	0	Chr19Partial	78365	255	50M	*	0	0	ccaggaagtaagagcaagatgccattttcaatctggatgcatgcaaagtc	*
 Gene5-1581	0	Chr19Partial	80425	255	50M	*	0	0	atcaggacaaacacgtgggtacatggaggggaacaacacacaccagggcc	*
+Gene5-1581	0	Chr19Partial	80348	255	50M	*	0	0	atcaggacaaacacgtgggtacatggaggggaacaacacacaccagggcc	*
 Gene5-1581	0	Chr19Partial	80271	255	50M	*	0	0	atcaggacaaacacgtgggtacatggaggggaacaacacacaccagggcc	*
 Gene5-1580	0	Chr19Partial	77180	255	50M	*	0	0	agaaacaatttaacttcttcctttccaattttcatgccttttatttcttt	*
 Gene5-1579	0	Chr19Partial	75161	255	50M	*	0	0	aaagagtataattggattgtttataacacaaataataaatgcttgagggg	*
@@ -6734,6 +6738,7 @@ Gene5-1561	0	Chr19Partial	75744	255	50M	*	0	0	ttgacacactgatttgatatctttttaatatatg
 Gene5-1560	0	Chr19Partial	77201	255	50M	*	0	0	tttccaattttcatgccttttatttctttcttttgcctaattgctctggc	*
 Gene5-1559	0	Chr19Partial	77876	255	50M	*	0	0	ttggtgtctgagtacattattcatccctcgtgcagctggggtctgcagga	*
 Gene5-1558	0	Chr19Partial	75645	255	50M	*	0	0	tttcttcatccactcatgtgtcgatggatacttaagttaattccacatct	*
+Gene5-1557	0	Chr19Partial	80345	255	50M	*	0	0	accatcaggacaaacacgtgggtacatggaggggaacaacacacaccagg	*
 Gene5-1557	0	Chr19Partial	80268	255	50M	*	0	0	accatcaggacaaacacgtgggtacatggaggggaacaacacacaccagg	*
 Gene5-1557	0	Chr19Partial	80422	255	50M	*	0	0	accatcaggacaaacacgtgggtacatggaggggaacaacacacaccagg	*
 Gene5-1556	0	Chr19Partial	74234	255	50M	*	0	0	taaatattgcatccacctagccctggagttctttctacaggaaaaaaaaa	*
@@ -6792,6 +6797,7 @@ Gene5-1504	0	Chr19Partial	74853	255	50M	*	0	0	gagaccctgtcatttgcaacaacatagatgaaac
 Gene5-1503	0	Chr19Partial	76435	255	50M	*	0	0	aataagggcctaagatcaatcttgtggacattcagttttctcaacaccat	*
 Gene5-1502	0	Chr19Partial	80257	255	50M	*	0	0	gggggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaa	*
 Gene5-1502	0	Chr19Partial	80411	255	50M	*	0	0	gggggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaa	*
+Gene5-1502	0	Chr19Partial	80334	255	50M	*	0	0	gggggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaa	*
 Gene5-1501	0	Chr19Partial	78908	255	50M	*	0	0	cctgagcttccccaaccttcctgtgctgagattatagtgcagtgaggccc	*
 Gene5-1499	0	Chr19Partial	74596	255	50M	*	0	0	tatggagaacagtttgaaggctcctcaaaaaagtaaaaatagagctacca	*
 Gene5-1498	0	Chr19Partial	78664	255	50M	*	0	0	aaccagtctgcaggtgtcattgctgggtgccccagcctgttcccctgaga	*
@@ -6799,6 +6805,7 @@ Gene5-1497	0	Chr19Partial	79619	255	50M	*	0	0	cgctggaacccaggaggcagaggtcaaagtgagc
 Gene5-1496	0	Chr19Partial	75883	255	50M	*	0	0	gttttccttttctccacatcctctccaacacttggtatcttctgcctttt	*
 Gene5-1495	0	Chr19Partial	80258	255	50M	*	0	0	ggggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaac	*
 Gene5-1495	0	Chr19Partial	80412	255	50M	*	0	0	ggggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaac	*
+Gene5-1495	0	Chr19Partial	80335	255	50M	*	0	0	ggggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaac	*
 Gene5-1494	0	Chr19Partial	78800	255	50M	*	0	0	gctaccccaccgtttataaacataggttgtggtgcagtggggccctctcc	*
 Gene5-1493	0	Chr19Partial	75263	255	50M	*	0	0	aaaatatttcatgtaccccataaatgtgtacacctgctatgtacccacaa	*
 Gene5-1492	0	Chr19Partial	77425	255	50M	*	0	0	gaagtatttcaatttcaaaaagtagcaacaactgtgggagttcagtcagg	*
@@ -6840,6 +6847,7 @@ Gene5-1457	0	Chr19Partial	75288	255	50M	*	0	0	gtgtacacctgctatgtacccacaaaaattaaat
 Gene5-1456	0	Chr19Partial	79535	255	50M	*	0	0	tctctactaaaaatacaaaaattagccaggtatagtggtgcacacctgta	*
 Gene5-1455	0	Chr19Partial	78175	255	50M	*	0	0	tgagcgaagtcctagtatgtgagagaggcagagagcctccctctgtaact	*
 Gene5-1454	0	Chr19Partial	75609	255	50M	*	0	0	ggttgtatactattctattgtgtatgtgtgccacattttcttcatccact	*
+Gene5-1453	0	Chr19Partial	80331	255	50M	*	0	0	acagggggtaggagaccatcaggacaaacacgtgggtacatggaggggaa	*
 Gene5-1453	0	Chr19Partial	80254	255	50M	*	0	0	acagggggtaggagaccatcaggacaaacacgtgggtacatggaggggaa	*
 Gene5-1453	0	Chr19Partial	80408	255	50M	*	0	0	acagggggtaggagaccatcaggacaaacacgtgggtacatggaggggaa	*
 Gene5-1452	0	Chr19Partial	78018	255	50M	*	0	0	ccacttagaaatagcaagagagtgcacaaaggtcaactctgtgagctcta	*
@@ -6877,6 +6885,7 @@ Gene5-1421	0	Chr19Partial	79812	255	50M	*	0	0	tatatatacatattataactacatatatatacac
 Gene5-1420	0	Chr19Partial	74382	255	50M	*	0	0	gaccattccttatgattgtcaaatttattaatataaagtttcatatttta	*
 Gene5-1419	0	Chr19Partial	76050	255	50M	*	0	0	tcttttgagaaatgtctatttagatcctttgtcaatttttcattagggtt	*
 Gene5-1418	0	Chr19Partial	80426	255	50M	*	0	0	tcaggacaaacacgtgggtacatggaggggaacaacacacaccagggcct	*
+Gene5-1418	0	Chr19Partial	80349	255	50M	*	0	0	tcaggacaaacacgtgggtacatggaggggaacaacacacaccagggcct	*
 Gene5-1418	0	Chr19Partial	80272	255	50M	*	0	0	tcaggacaaacacgtgggtacatggaggggaacaacacacaccagggcct	*
 Gene5-1417	0	Chr19Partial	74509	255	50M	*	0	0	tatgcattaccttacatgcttatctttttttatgagaacacttaaaaatc	*
 Gene5-1416	0	Chr19Partial	77547	255	50M	*	0	0	tagcttcagtaatagatctgaatgaaggcggcctaatccttccttgagta	*
@@ -6987,6 +6996,7 @@ Gene5-1315	0	Chr19Partial	77279	255	50M	*	0	0	agttctgagagtgggcacccttgtatgaagtttt
 Gene5-1314	0	Chr19Partial	79534	255	50M	*	0	0	atctctactaaaaatacaaaaattagccaggtatagtggtgcacacctgt	*
 Gene5-1313	0	Chr19Partial	75606	255	50M	*	0	0	taaggttgtatactattctattgtgtatgtgtgccacattttcttcatcc	*
 Gene5-1312	0	Chr19Partial	76124	255	50M	*	0	0	tttgagttcctaagatattttggacattagcctcttatcaaatgtatagt	*
+Gene5-1311	0	Chr19Partial	80330	255	50M	*	0	0	gacagggggtaggagaccatcaggacaaacacgtgggtacatggagggga	*
 Gene5-1311	0	Chr19Partial	80253	255	50M	*	0	0	gacagggggtaggagaccatcaggacaaacacgtgggtacatggagggga	*
 Gene5-1311	0	Chr19Partial	80407	255	50M	*	0	0	gacagggggtaggagaccatcaggacaaacacgtgggtacatggagggga	*
 Gene5-1310	0	Chr19Partial	78788	255	50M	*	0	0	ccagcatcctgagctaccccaccgtttataaacataggttgtggtgcagt	*
@@ -7062,6 +7072,7 @@ Gene5-1242	0	Chr19Partial	77480	255	50M	*	0	0	gggaaaaattttaaagatagttataagaaatcga
 Gene5-1241	0	Chr19Partial	74929	255	50M	*	0	0	acaaatactatgtgttatcacttatatgtggaatccaaaaagcaaacaac	*
 Gene5-1240	0	Chr19Partial	80275	255	50M	*	0	0	ggacaaacacgtgggtacatggaggggaacaacacacaccagggcctctc	*
 Gene5-1240	0	Chr19Partial	80429	255	50M	*	0	0	ggacaaacacgtgggtacatggaggggaacaacacacaccagggcctctc	*
+Gene5-1240	0	Chr19Partial	80352	255	50M	*	0	0	ggacaaacacgtgggtacatggaggggaacaacacacaccagggcctctc	*
 Gene5-1239	0	Chr19Partial	79229	255	50M	*	0	0	ctggtaaggctgtggagaaataggaatgtttttacactgtttgtgggaat	*
 Gene5-1238	0	Chr19Partial	76251	255	50M	*	0	0	gttgatgctattccatttgtgttttgttgcttttcttgcctgtgctttag	*
 Gene5-1237	0	Chr19Partial	78659	255	50M	*	0	0	cctacaaccagtctgcaggtgtcattgctgggtgccccagcctgttcccc	*
@@ -7231,6 +7242,7 @@ Gene5-1077	0	Chr19Partial	76908	255	50M	*	0	0	aattgttttcatcaatgttttgtagttttcagtg
 Gene5-1076	0	Chr19Partial	80749	255	50M	*	0	0	ttcttattttccatgtctttattcctgtgttcattttggatagccccttc	*
 Gene5-1075	0	Chr19Partial	79508	255	50M	*	0	0	cagcctagccaacatggggaaactccatctctactaaaaatacaaaaatt	*
 Gene5-1074	0	Chr19Partial	80417	255	50M	*	0	0	aggagaccatcaggacaaacacgtgggtacatggaggggaacaacacaca	*
+Gene5-1074	0	Chr19Partial	80340	255	50M	*	0	0	aggagaccatcaggacaaacacgtgggtacatggaggggaacaacacaca	*
 Gene5-1074	0	Chr19Partial	80263	255	50M	*	0	0	aggagaccatcaggacaaacacgtgggtacatggaggggaacaacacaca	*
 Gene5-1073	0	Chr19Partial	77500	255	50M	*	0	0	ttataagaaatcgacacaaaccttcatggaaggctgggggtgttgtatag	*
 Gene5-1072	0	Chr19Partial	75815	255	50M	*	0	0	tttttacagaatcatttatactgtcttttacaatggctgaaatagtttac	*
@@ -7260,6 +7272,7 @@ Gene5-1049	0	Chr19Partial	77827	255	50M	*	0	0	actctttctgtgcatggcccagccccctagcggc
 Gene5-1048	0	Chr19Partial	78606	255	50M	*	0	0	cagctgtaatttctcccaggtgatgaaacttgcagccagggccagcttgg	*
 Gene5-1047	0	Chr19Partial	80265	255	50M	*	0	0	gagaccatcaggacaaacacgtgggtacatggaggggaacaacacacacc	*
 Gene5-1047	0	Chr19Partial	80419	255	50M	*	0	0	gagaccatcaggacaaacacgtgggtacatggaggggaacaacacacacc	*
+Gene5-1047	0	Chr19Partial	80342	255	50M	*	0	0	gagaccatcaggacaaacacgtgggtacatggaggggaacaacacacacc	*
 Gene5-1046	0	Chr19Partial	75328	255	50M	*	0	0	acaatacattgttatccactatagtcaccatattgcacaatagatctgtt	*
 Gene5-1045	0	Chr19Partial	80727	255	50M	*	0	0	tccatgtctcctaactacatgtttcttattttccatgtctttattcctgt	*
 Gene5-1044	0	Chr19Partial	79213	255	50M	*	0	0	ccagaaacaacagttgctggtaaggctgtggagaaataggaatgttttta	*
@@ -7280,6 +7293,7 @@ Gene5-1030	0	Chr19Partial	78165	255	50M	*	0	0	cttataaaagtgagcgaagtcctagtatgtgaga
 Gene5-1029	0	Chr19Partial	75167	255	50M	*	0	0	tataattggattgtttataacacaaataataaatgcttgaggggatgaat	*
 Gene5-1028	0	Chr19Partial	80267	255	50M	*	0	0	gaccatcaggacaaacacgtgggtacatggaggggaacaacacacaccag	*
 Gene5-1028	0	Chr19Partial	80421	255	50M	*	0	0	gaccatcaggacaaacacgtgggtacatggaggggaacaacacacaccag	*
+Gene5-1028	0	Chr19Partial	80344	255	50M	*	0	0	gaccatcaggacaaacacgtgggtacatggaggggaacaacacacaccag	*
 Gene5-1027	0	Chr19Partial	75427	255	50M	*	0	0	tacccaatcctcctggtaaccatcattctactctgtacttctatgtgttc	*
 Gene5-1026	0	Chr19Partial	74426	255	50M	*	0	0	attttatatttattttatcagataaataaaattatatgttttgaaatata	*
 Gene5-1025	0	Chr19Partial	74290	255	50M	*	0	0	aaataaaatttctacaatgaaaaaaaaactactcagtttttctagttttt	*
@@ -7804,6 +7818,7 @@ Gene5-513	0	Chr19Partial	78178	255	50M	*	0	0	gcgaagtcctagtatgtgagagaggcagagagcct
 Gene5-512	0	Chr19Partial	75294	255	50M	*	0	0	acctgctatgtacccacaaaaattaaatttaaaaacaatacattgttatc	*
 Gene5-511	0	Chr19Partial	80259	255	50M	*	0	0	gggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaaca	*
 Gene5-511	0	Chr19Partial	80413	255	50M	*	0	0	gggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaaca	*
+Gene5-511	0	Chr19Partial	80336	255	50M	*	0	0	gggtaggagaccatcaggacaaacacgtgggtacatggaggggaacaaca	*
 Gene5-510	0	Chr19Partial	76308	255	50M	*	0	0	tcataaaatattattgcccagaccaatgtcttggagttattcccctgttt	*
 Gene5-509	0	Chr19Partial	75544	255	50M	*	0	0	tactcagtataatgtcctcccggttcattcatgttgtcacaaatgatact	*
 Gene5-508	0	Chr19Partial	76868	255	50M	*	0	0	atgaacatgagatatctttccatttatttgtggcttcttcaattgttttc	*
@@ -7866,6 +7881,7 @@ Gene5-455	0	Chr19Partial	76393	255	50M	*	0	0	taagtctaacttattttgaatttatatttttatat
 Gene5-454	0	Chr19Partial	75053	255	50M	*	0	0	gggatggttaatgggtacaaaaaaagaaagatttaataagacctagtatt	*
 Gene5-453	0	Chr19Partial	74115	255	50M	*	0	0	tcatggaggtaccaccatataaaacaagttggaaagtgttatgtcttccc	*
 Gene5-452	0	Chr19Partial	74764	255	50M	*	0	0	gtcaacctaagtgtccatcaacagatgaatgaataaagaaaatgtggtac	*
+Gene5-451	0	Chr19Partial	80353	255	50M	*	0	0	gacaaacacgtgggtacatggaggggaacaacacacaccagggcctctca	*
 Gene5-451	0	Chr19Partial	80276	255	50M	*	0	0	gacaaacacgtgggtacatggaggggaacaacacacaccagggcctctca	*
 Gene5-451	0	Chr19Partial	80430	255	50M	*	0	0	gacaaacacgtgggtacatggaggggaacaacacacaccagggcctctca	*
 Gene5-450	0	Chr19Partial	78397	255	50M	*	0	0	ctggatgcatgcaaagtcagcttttttttttctttttgtgacccagcaga	*
@@ -8110,6 +8126,7 @@ Gene5-215	0	Chr19Partial	80636	255	50M	*	0	0	aaaatttaaaaaatatatacactgattcatgatct
 Gene5-214	0	Chr19Partial	78927	255	50M	*	0	0	cctgtgctgagattatagtgcagtgaggccctctcatctccacacatagg	*
 Gene5-213	0	Chr19Partial	78223	255	50M	*	0	0	ctgacattttcactgtgaatctgagcaaccccagccaagttgttgcattt	*
 Gene5-212	0	Chr19Partial	80410	255	50M	*	0	0	agggggtaggagaccatcaggacaaacacgtgggtacatggaggggaaca	*
+Gene5-212	0	Chr19Partial	80333	255	50M	*	0	0	agggggtaggagaccatcaggacaaacacgtgggtacatggaggggaaca	*
 Gene5-212	0	Chr19Partial	80256	255	50M	*	0	0	agggggtaggagaccatcaggacaaacacgtgggtacatggaggggaaca	*
 Gene5-211	0	Chr19Partial	74510	255	50M	*	0	0	atgcattaccttacatgcttatctttttttatgagaacacttaaaaatct	*
 Gene5-210	0	Chr19Partial	74310	255	50M	*	0	0	aaaaaaaactactcagtttttctagtttttttctgatcatttcataaaag	*
