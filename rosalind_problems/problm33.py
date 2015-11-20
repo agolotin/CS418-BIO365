@@ -19,6 +19,7 @@ def fittingAlignment(seq1, seq2):
 
     j = len(seq2)
     i = max(enumerate([scoring_matrix[row][j] for row in xrange(len(seq2), len(seq1))]),key=lambda x: x[1])[0] + len(seq2)
+
     max_score = str(scoring_matrix[i][j])
 
     insert_indel = lambda word, k: word[:k] + "-" + word[k:]

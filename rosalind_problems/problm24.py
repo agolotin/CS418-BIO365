@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 import sys
-from compiler.ast import flatten
 
 with open(sys.argv[1]) as fd:
     kmer_list = [seq.strip() for seq in fd.readlines()]
