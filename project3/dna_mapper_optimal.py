@@ -5,6 +5,7 @@ from suffix_tree import SuffixTree
 from datetime import datetime
 import itertools
 import pickle
+import time
 import sys
 import os
 
@@ -189,7 +190,7 @@ def createNewOverlapFinder(output_file, main_sequence):
         return finder
 
 
-# ==================== CREATING OUTPUT FILE ==========================
+# ================ CREATING OUTPUT FILE AS SAM FILE ==================
 def createSam(genome_header, read_overlaps, output=""):
     for read_tuple, overlap_indicies in filter(lambda x: x[1] is not None, read_overlaps):
         for overlap_index in overlap_indicies:
@@ -206,10 +207,12 @@ if __name__ == "__main__":
     print "[Logging {0}] The program started".format(getTime())
     try: 
         with open(sys.argv[1]) as fd:
+            print "[Logging {0}] Genome file: {1}".format(getTime(), sys.argv[1])
             genome_header = fd.readline().strip()[1:]
             main_sequence = "".join([seq.strip().lower() for seq in fd]) + "$"
 
         with open(sys.argv[2]) as fd:
+            print "[Logging {0}] Reads file: {1}".format(getTime(), sys.argv[2])
             # Read in first 4 lines to check whether it's a fasta or fastq file
             test_reads = [ next(fd).strip()[1:] if idx % 2 == 0 else next(fd).strip().lower() for idx in xrange(4) ]
             if test_reads[2] == "":
@@ -217,7 +220,7 @@ if __name__ == "__main__":
                 test_reads = [tuple(test_reads[:2])]
             else:
                 step = 2 # In case it's a fasta file read 2 lines at a time
-                test_reads = [tuple(test_reads)]
+                test_reads = [tuple(test_reads[:2]), tuple(test_reads[2:])] 
 
             reads = test_reads + [(single_read[0].strip()[1:], single_read[1].strip().lower()) 
                     for single_read in itertools.izip_longest(*[fd]*step)]
@@ -230,14 +233,18 @@ if __name__ == "__main__":
         if len(sys.argv) == 6:
             chunk = int(sys.argv[5])
             print "[Logging {0}] Chunk number: {1}".format(getTime(), chunk)
-
+            
+        print "[Logging {0}] Input files loaded.".format(getTime())
     except IndexError:
         print "USAGE: python dna_mapper_threadded.py <chromosome_file> <reads_file> <errors | noerrors> <kmer_length> <chunk_num>"
         print "\t<errors> flag should be specified as \"errors\" or \"noerrors\""
         print "\t<kmer_len> should be specified in case <error> flag is set to True"
         print "\t<chunk_num> is an optional parameter that represents which part of a large file is being processed"
-        print "\tIn the error on the command line is specified as <noerror>, then <kmer_len> and <chunk_num> params are ignored"
+        print "\tIf the error on the command line is specified as <noerror>, then <kmer_len> and <chunk_num> params are ignored"
         sys.exit()
+
+    print "[Logging {0}] CHECK PARAMETERS.".format(getTime())
+    time.sleep(3) # Put to sleep so user can check everything
     
     # Make sure the necessary directories exist
     print "[Logging {0}] Making sure the necessary directories exist.".format(getTime())
@@ -247,7 +254,6 @@ if __name__ == "__main__":
         os.makedirs("saved_objects")
     # =========================================
 
-    print "[Logging {0}] Input files loaded.".format(getTime())
     main_filename = sys.argv[1].split("/")[-1]
     finder = loadOverlapFinder(main_filename, main_sequence)
 
@@ -256,8 +262,6 @@ if __name__ == "__main__":
     print "[Logging {0}] The genome was successfully indexed.".format(getTime())
     # ===========================================================
 
-    # Create output SAM file
-    sam_output = createSam(genome_header, read_overlaps)
     # Determine the output file name
     if not errors: 
         outfile_name = "output_sam/{0}.sam".format(main_filename)
@@ -267,7 +271,9 @@ if __name__ == "__main__":
         else:
             outfile_name = "output_sam/chunk{0}_kmerlen{1}_{2}.sam".format(chunk, kmer_len, main_filename)
     # ===========================================================
-    with open(oufile_name, "w+") as fd:
+    # Create output SAM file
+    sam_output = createSam(genome_header, read_overlaps)
+    with open(outfile_name, "w+") as fd:
         fd.write(sam_output)
 
     print "[Logging {0}] SAM file was written as {1}.".format(getTime(), outfile_name)
