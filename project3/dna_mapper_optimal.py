@@ -170,24 +170,24 @@ def loadOverlapFinder(filename, main_sequence):
         return createNewOverlapFinder(input_file, main_sequence)
 
 def createNewOverlapFinder(output_file, main_sequence):
-        print "[Logging {0}] Constructing suffix array".format(getTime())
-        suffix_array = constructSuffixArray(main_sequence)
+    print "[Logging {0}] Constructing suffix array".format(getTime())
+    suffix_array = constructSuffixArray(main_sequence)
 
-        print "[Logging {0}] Constructing first rotation and Burrows-Wheeler Transform".format(getTime())
-        first_rotation, bw_transform = BurrowsWheelerTransform(main_sequence, suffix_array)
+    print "[Logging {0}] Constructing first rotation and Burrows-Wheeler Transform".format(getTime())
+    first_rotation, bw_transform = BurrowsWheelerTransform(main_sequence, suffix_array)
 
-        print "[Logging {0}] Constructing last-to-first array".format(getTime())
-        last_to_first = constructLTF(first_rotation, bw_transform)
+    print "[Logging {0}] Constructing last-to-first array".format(getTime())
+    last_to_first = constructLTF(first_rotation, bw_transform)
 
-        # Custom data structure that holds all of the other necessary data structures.
-        finder = overlapFinder(suffix_array, first_rotation, bw_transform, last_to_first)
-        print "[Logging {0}] Overlap finder object constructed. Saving to file for future use".format(getTime())
+    # Custom data structure that holds all of the other necessary data structures.
+    finder = overlapFinder(suffix_array, first_rotation, bw_transform, last_to_first)
+    print "[Logging {0}] Overlap finder object constructed. Saving to file for future use".format(getTime())
 
-        # Saving the data structure for later use
-        pickle.dump(finder, open(output_file, "wb+"))
-        print "[Logging {0}] Object saved successfully as saved_objects/{1}".format(getTime(), output_file)
+    # Saving the data structure for later use
+    pickle.dump(finder, open(output_file, "wb+"))
+    print "[Logging {0}] Object saved successfully as saved_objects/{1}".format(getTime(), output_file)
 
-        return finder
+    return finder
 
 
 # ================ CREATING OUTPUT FILE AS SAM FILE ==================
