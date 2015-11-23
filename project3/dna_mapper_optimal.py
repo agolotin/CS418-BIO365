@@ -236,7 +236,7 @@ if __name__ == "__main__":
             
         print "[Logging {0}] Input files loaded.".format(getTime())
     except IndexError:
-        print "USAGE: python dna_mapper_threadded.py <chromosome_file> <reads_file> <errors | noerrors> <kmer_length> <chunk_num>"
+        print "USAGE: python dna_mapper_optimal.py <chromosome_file> <reads_file> <errors | noerrors> <kmer_length> <chunk_num>"
         print "\t<errors> flag should be specified as \"errors\" or \"noerrors\""
         print "\t<kmer_len> should be specified in case <error> flag is set to True"
         print "\t<chunk_num> is an optional parameter that represents which part of a large file is being processed"
