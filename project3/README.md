@@ -1,5 +1,5 @@
 #Project 3 Mapping Project
-The working and the most recent version resides in *dna_mapper_optimal.py_* Works for both .fasta and .fastq files.<br>
+The working and the most recent version resides in *dna_mapper_optimal.py* Works for both .fasta and .fastq files.<br>
 The input files can be found in the following locations: <br>
 1. Example reference sequence and accompanying reads are locatied in *example_input/*<br>
 2. RNASEQ reference sequence and accompanying reads are locatied in *rnaseq_input/*. RNASEQ represents a small example dataset with no errors.<br>
